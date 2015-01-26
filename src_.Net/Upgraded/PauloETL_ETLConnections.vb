@@ -35,17 +35,34 @@ Public Class ETLConnections
 				ErrorMessage = MainErrHandler(0, "Error, File Must Have At Least 2 Connections Defined", cModule & cProcedure)
 			Else
 				'Loop Through Connections
-				For I As Integer = 1 To lNodeCount
-					'UPGRADE_WARNING: (2065) MSXML2.IXMLDOMNodeList method oNodeList.nextNode has a new behavior. More Information: http://www.vbtonet.com/ewis/ewi2065.aspx
-					oNode = oNodeList.GetEnumerator().Current
-					oETLConnection = New ETLConnection()
-					If oETLConnection.LoadFromXML(oNode, ErrorMessage) Then
-						mCol.Add(oETLConnection.ID, oETLConnection)
-					Else
-						lNodeCount = 0
-						Exit For
-					End If
-				Next I
+                'For I As Integer = 1 To lNodeCount
+                '	'UPGRADE_WARNING: (2065) MSXML2.IXMLDOMNodeList method oNodeList.nextNode has a new behavior. More Information: http://www.vbtonet.com/ewis/ewi2065.aspx
+                '                oNode = oNodeList.GetEnumerator().Current
+                '	oETLConnection = New ETLConnection()
+                '	If oETLConnection.LoadFromXML(oNode, ErrorMessage) Then
+                '		mCol.Add(oETLConnection.ID, oETLConnection)
+                '	Else
+                '		lNodeCount = 0
+                '		Exit For
+                '	End If
+                '            Next I
+
+                'ADAM CODE
+                Dim oNodeEnumerator 'As System.Xml.XmlNodeListEnumerator
+                oNodeEnumerator = oNodeList.GetEnumerator()
+
+                While oNodeEnumerator.MoveNext()
+                    oNode = oNodeEnumerator.Current
+                    oETLConnection = New ETLConnection()
+                    If oETLConnection.LoadFromXML(oNode, ErrorMessage) Then
+                        mCol.Add(oETLConnection.ID, oETLConnection)
+                    Else
+                        lNodeCount = 0
+                        Exit While
+                    End If
+                End While
+
+
 				lReturn = lNodeCount
 
 			End If
@@ -82,11 +99,11 @@ Public Class ETLConnections
 
 	'UPGRADE_ISSUE: (2068) IUnknown object was not upgraded. More Information: http://www.vbtonet.com/ewis/ewi2068.aspx
 
-	Public Function GetEnumerator() As IEnumerator Implements System.Collections.IEnumerable.GetEnumerator
-		'this property allows you to enumerate
-		'this collection with the For...Each syntax
-		Return mCol.GetEnumerator()
-	End Function
+    Public Function GetEnumerator() As IEnumerator Implements System.Collections.IEnumerable.GetEnumerator
+        'this property allows you to enumerate
+        'this collection with the For...Each syntax
+        Return mCol.GetEnumerator()
+    End Function
 
 
 	Friend Sub New()

@@ -59,7 +59,7 @@ Partial Friend Class frmETLMain
 			Dim oNodeList As XmlNodeList
 			Dim oNode As XmlElement
 			Dim oETLConnection As PauloETL.ETLConnection
-			lReturn = "lNodeCount"
+            'lReturn = "lNodeCount"
 			Dim oItem As ListViewItem
 			Dim sValue As String = ""
 
@@ -124,24 +124,51 @@ Partial Friend Class frmETLMain
 		Dim lRow As Integer = 1
 		lvwConnections.Columns.Insert(0, "ID", CInt(lvwConnections.Width * 0.25))
 		lvwConnections.Columns.Insert(1, "Connection Name", CInt(lvwConnections.Width * 0.75))
-		If moETLControl.LoadXMLConfig(txtXMLFile.Text, sError) > 0 Then
-			For	Each oETLConnection As PauloETL.ETLConnection In moETLControl.ETLConnections
-				oItem = lvwConnections.Items.Insert(lRow - 1, oETLConnection.ID, oETLConnection.ID, "")
-				ListViewHelper.GetListViewSubItem(oItem, 1).Text = oETLConnection.Name
-				lRow += 1
-			Next oETLConnection
-			cmdLoadXML.Enabled = False
-			cmdTestConnection.Enabled = True
-			cmdViewJob.Enabled = True
-			cmdExecuteJob.Enabled = True
-			'Load Job List
-			LoadJobsFromXML()
-		Else
-			'Destroy and Re-Create ETL Control Interface
-			moETLControl = Nothing
-			moETLControl = New PauloETL.ETLControl()
-			moETLControl.ModalErrors = True
-		End If
+        If moETLControl.LoadXMLConfig(txtXMLFile.Text, sError) > 0 Then
+
+            Dim i = 0
+
+            'For Each oETLConnection As PauloETL.ETLConnection In moETLControl.ETLConnections
+            '    oItem = lvwConnections.Items.Insert(lRow - 1, oETLConnection.ID, oETLConnection.ID, "")
+            '    ListViewHelper.GetListViewSubItem(oItem, 1).Text = oETLConnection.Name
+            '    lRow += 1
+            'Next oETLConnection
+
+            Dim connectionsEnumerator As IDictionaryEnumerator
+
+            connectionsEnumerator = moETLControl.ETLConnections.GetEnumerator()
+
+            While connectionsEnumerator.MoveNext()
+                Dim oETLConnection As PauloETL.ETLConnection
+                oETLConnection = moETLControl.ETLConnections.Item(connectionsEnumerator.Key)
+
+                oItem = lvwConnections.Items.Insert(lRow - 1, oETLConnection.ID, oETLConnection.ID, "")
+                ListViewHelper.GetListViewSubItem(oItem, 1).Text = oETLConnection.Name
+                lRow += 1
+            End While
+
+
+
+            'For i = 0 To moETLControl.ETLConnections.Count
+            '    Dim oETLConnection As PauloETL.ETLConnection
+            '    oETLConnection = moETLControl.ETLConnections.Item(0)
+            '    oItem = lvwConnections.Items.Insert(lRow - 1, oETLConnection.ID, oETLConnection.ID, "")
+            '    ListViewHelper.GetListViewSubItem(oItem, 1).Text = oETLConnection.Name
+            '    lRow += 1
+            'Next
+
+            cmdLoadXML.Enabled = False
+            cmdTestConnection.Enabled = True
+            cmdViewJob.Enabled = True
+            cmdExecuteJob.Enabled = True
+            'Load Job List
+            LoadJobsFromXML()
+        Else
+            'Destroy and Re-Create ETL Control Interface
+            moETLControl = Nothing
+            moETLControl = New PauloETL.ETLControl()
+            moETLControl.ModalErrors = True
+        End If
 	End Sub
 
 	Private Sub cmdTestConnection_Click(ByVal eventSender As Object, ByVal eventArgs As EventArgs) Handles cmdTestConnection.Click
