@@ -1,0 +1,226 @@
+﻿<html>
+	<head>
+		<META HTTP-EQUIV="Content-Type" content="text/html; charset=utf-8">
+		<link rel="stylesheet" href="_UpgradeReport_Files\UpgradeReport.css">
+		<title>PauloETL.vbp Upgrade Report</title>
+		
+		<script language="javascript">
+			function outliner () {
+				oMe = window.event.srcElement
+				//get child element
+				var child = document.all[event.srcElement.getAttribute("child",false)];
+				//if child element exists, expand or collapse it.
+				if (null != child)
+					child.className = child.className == "collapsed" ? "expanded" : "collapsed";
+			}
+		
+			function changepic() {
+				uMe = window.event.srcElement;
+				var check = uMe.src.toLowerCase();
+				if (check.lastIndexOf("upgradereport_plus.gif") != -1)
+				{
+					uMe.src = "_UpgradeReport_Files/UpgradeReport_Minus.gif"
+				}
+				else
+				{
+					uMe.src = "_UpgradeReport_Files/UpgradeReport_Plus.gif"
+				}
+			}
+		</script>
+		
+	</head>
+	<body topmargin="0" leftmargin="0" rightmargin="0" onclick="outliner();">
+		<h1>Upgrade Report for PauloETL.vbp</h1>
+		
+		<p><span class="note">
+		<b>Time of Upgrade:  </b>1/20/2015 3:09 PM<br>
+		</span></p>
+		
+		<h2>List of Project Files</h2>
+		<table cellpadding="2" cellspacing="0" width="98%" border="1"bordercolor="white" class="infotable">
+			<tr>
+				<td nowrap class="header">New Filename</td>
+				<td nowrap class="header">Original Filename</td>
+				<td nowrap class="header">File Type</td>
+				<td nowrap class="header">Status</td>
+				<td nowrap class="header">Errors</td>
+				<td nowrap class="header">Warnings</td>
+				<td nowrap class="header">Total Issues</td>
+			</tr>
+		<tr class="row">
+			<td class="content"><IMG alt="expand/collapse section" class="expandable" height="11"onclick=changepic() src="_UpgradeReport_Files/UpgradeReport_Minus.gif" width="9" child="issue0">&nbsp;(Global Issues)</td>
+			<td class="content"></td>
+			<td class="content"></td>
+			<td class="content">
+		</td>	<td class="content">0</td>
+			<td class="content">63</td>
+			<td class="content">63</td>
+		</tr>
+			<tr id="issue0" bgcolor="#ffffff"><td colspan="8">
+				<table width="97%" border="1" bordercolor="#dcdcdc" rules="cols" class="issuetable">
+				<tr><td colspan="8" class="issuetitle">Global update issues:</td></tr><tr><td width="10" class="issuehdr">#</td><td class="issuehdr" nowrap>Severity</td><td class="issuehdr">Location</td><td class="issuehdr">Object Type</td><td class="issuehdr">Object Name</td><td class="issuehdr">Property</td><td class="issuehdr">Description</td><td class="issuehdr">Qty</td></tr>
+					<tr><td width="10" class="issuecontent">1</td><td class="issuecontent" nowrap>Global Warning</td><td class="issuecontent"></td><td class="issuecontent"></td><td class="issuecontent"></td><td class="issuecontent"></td><td class="issuecontent"><a href='http://www.vbtonet.com/ewis/ewi1038.aspx'>Default Properties (Late Binding) will be resolved using a Helper.</a></td><td class="issuecontent">63</td></tr>
+				</table>
+			</td></tr>
+		<tr class="row">
+			<td class="content"><IMG alt="expand/collapse section" class="expandable" height="11"onclick=changepic() src="_UpgradeReport_Files/UpgradeReport_Plus.gif" width="9" child="issue1">&nbsp;PauloETL_ETLCommand.vb</td>
+			<td class="content">PauloETL_ETLCommand.cls</td>
+			<td class="content">Class Module</td>
+			<td class="content">
+		Upgraded with issues</td>	<td class="content">3</td>
+			<td class="content">2</td>
+			<td class="content">5</td>
+		</tr>
+			<tr class="collapsed" id="issue1" bgcolor="#ffffff"><td colspan="8">
+				<table width="97%" border="1" bordercolor="#dcdcdc" rules="cols" class="issuetable">
+				<tr><td colspan="8" class="issuetitle">Upgrade Issues for PauloETL_ETLCommand.cls:</td></tr><tr><td width="10" class="issuehdr">#</td><td class="issuehdr" nowrap>Severity</td><td class="issuehdr">Location</td><td class="issuehdr">Object Type</td><td class="issuehdr">Object Name</td><td class="issuehdr">Property</td><td class="issuehdr">Description</td><td class="issuehdr">Qty</td></tr>
+					<tr><td width="10" class="issuecontent">1</td><td class="issuecontent" nowrap>Compile Error</td><td class="issuecontent">Execute</td><td class="issuecontent">ADODB.Field</td><td class="issuecontent">fld</td><td class="issuecontent">ActualSize</td><td class="issuecontent"><a href='http://www.vbtonet.com/ewis/ewi2064.aspx'>ADODB.Field property fld.ActualSize was not upgraded.</a></td><td class="issuecontent">1</td></tr>
+					<tr><td width="10" class="issuecontent">2</td><td class="issuecontent" nowrap>Compile Error</td><td class="issuecontent">Execute</td><td class="issuecontent">ADODB.Recordset</td><td class="issuecontent">moRs</td><td class="issuecontent">Fields</td><td class="issuecontent"><a href='http://www.vbtonet.com/ewis/ewi2064.aspx'>ADODB.Recordset property moRs.Fields was not upgraded.</a></td><td class="issuecontent">1</td></tr>
+					<tr><td width="10" class="issuecontent">3</td><td class="issuecontent" nowrap>Compile Error</td><td class="issuecontent">LoadFromXML</td><td class="issuecontent"></td><td class="issuecontent"></td><td class="issuecontent"></td><td class="issuecontent"><a href='http://www.vbtonet.com/ewis/ewi2068.aspx'>ADODB.ADO_LONGPTR object was not upgraded.</a></td><td class="issuecontent">1</td></tr>
+					<tr><td width="10" class="issuecontent">4</td><td class="issuecontent" nowrap>Runtime Warning</td><td class="issuecontent">LoadFromXML</td><td class="issuecontent">Boolean</td><td class="issuecontent">Information</td><td class="issuecontent">IsNull</td><td class="issuecontent"><a href='http://www.vbtonet.com/ewis/ewi1049.aspx'>Use of Null/IsNull() detected.</a></td><td class="issuecontent">1</td></tr>
+					<tr><td width="10" class="issuecontent">5</td><td class="issuecontent" nowrap>Runtime Warning</td><td class="issuecontent">LoadFromXML</td><td class="issuecontent">MSXML2.IXMLDOMNodeList</td><td class="issuecontent">oParamNodes</td><td class="issuecontent">nextNode</td><td class="issuecontent"><a href='http://www.vbtonet.com/ewis/ewi2065.aspx'>MSXML2.IXMLDOMNodeList method oParamNodes.nextNode has a new behavior.</a></td><td class="issuecontent">1</td></tr>
+				</table>
+			</td></tr>
+		<tr class="row">
+			<td class="content"><IMG alt="expand/collapse section" class="expandable" height="11"onclick=changepic() src="_UpgradeReport_Files/UpgradeReport_Plus.gif" width="9" child="issue2">&nbsp;PauloETL_ETLCommands.vb</td>
+			<td class="content">PauloETL_ETLCommands.cls</td>
+			<td class="content">Class Module</td>
+			<td class="content">
+		Upgraded with issues</td>	<td class="content">2</td>
+			<td class="content">1</td>
+			<td class="content">3</td>
+		</tr>
+			<tr class="collapsed" id="issue2" bgcolor="#ffffff"><td colspan="8">
+				<table width="97%" border="1" bordercolor="#dcdcdc" rules="cols" class="issuetable">
+				<tr><td colspan="8" class="issuetitle">Upgrade Issues for PauloETL_ETLCommands.cls:</td></tr><tr><td width="10" class="issuehdr">#</td><td class="issuehdr" nowrap>Severity</td><td class="issuehdr">Location</td><td class="issuehdr">Object Type</td><td class="issuehdr">Object Name</td><td class="issuehdr">Property</td><td class="issuehdr">Description</td><td class="issuehdr">Qty</td></tr>
+					<tr><td width="10" class="issuecontent">1</td><td class="issuecontent" nowrap>Compile Error</td><td class="issuecontent">NewEnum</td><td class="issuecontent"></td><td class="issuecontent"></td><td class="issuecontent"></td><td class="issuecontent"><a href='http://www.vbtonet.com/ewis/ewi2068.aspx'>IUnknown object was not upgraded.</a></td><td class="issuecontent">2</td></tr>
+					<tr><td width="10" class="issuecontent">2</td><td class="issuecontent" nowrap>Runtime Warning</td><td class="issuecontent">LoadFromXML</td><td class="issuecontent">MSXML2.IXMLDOMNodeList</td><td class="issuecontent">oNodeList</td><td class="issuecontent">nextNode</td><td class="issuecontent"><a href='http://www.vbtonet.com/ewis/ewi2065.aspx'>MSXML2.IXMLDOMNodeList method oNodeList.nextNode has a new behavior.</a></td><td class="issuecontent">1</td></tr>
+				</table>
+			</td></tr>
+		<tr class="row">
+			<td class="content"><IMG alt="expand/collapse section" class="expandable" height="11"onclick=changepic() src="_UpgradeReport_Files/UpgradeReport_Plus.gif" width="9" child="issue3">&nbsp;PauloETL_ETLConnection.vb</td>
+			<td class="content">PauloETL_ETLConnection.cls</td>
+			<td class="content">Class Module</td>
+			<td class="content">
+		Upgraded with issues</td>	<td class="content">1</td>
+			<td class="content">0</td>
+			<td class="content">1</td>
+		</tr>
+			<tr class="collapsed" id="issue3" bgcolor="#ffffff"><td colspan="8">
+				<table width="97%" border="1" bordercolor="#dcdcdc" rules="cols" class="issuetable">
+				<tr><td colspan="8" class="issuetitle">Upgrade Issues for PauloETL_ETLConnection.cls:</td></tr><tr><td width="10" class="issuehdr">#</td><td class="issuehdr" nowrap>Severity</td><td class="issuehdr">Location</td><td class="issuehdr">Object Type</td><td class="issuehdr">Object Name</td><td class="issuehdr">Property</td><td class="issuehdr">Description</td><td class="issuehdr">Qty</td></tr>
+					<tr><td width="10" class="issuecontent">1</td><td class="issuecontent" nowrap>To Do</td><td class="issuecontent">OpenConnection</td><td class="issuecontent">ADODB.Connection</td><td class="issuecontent">moCn</td><td class="issuecontent">Open</td><td class="issuecontent"><a href='http://www.vbtonet.com/ewis/ewi7010.aspx'>The connection string must be verified to fullfill the .NET data provider connection string requirements.</a></td><td class="issuecontent">1</td></tr>
+				</table>
+			</td></tr>
+		<tr class="row">
+			<td class="content"><IMG alt="expand/collapse section" class="expandable" height="11"onclick=changepic() src="_UpgradeReport_Files/UpgradeReport_Plus.gif" width="9" child="issue4">&nbsp;PauloETL_ETLConnections.vb</td>
+			<td class="content">PauloETL_ETLConnections.cls</td>
+			<td class="content">Class Module</td>
+			<td class="content">
+		Upgraded with issues</td>	<td class="content">2</td>
+			<td class="content">1</td>
+			<td class="content">3</td>
+		</tr>
+			<tr class="collapsed" id="issue4" bgcolor="#ffffff"><td colspan="8">
+				<table width="97%" border="1" bordercolor="#dcdcdc" rules="cols" class="issuetable">
+				<tr><td colspan="8" class="issuetitle">Upgrade Issues for PauloETL_ETLConnections.cls:</td></tr><tr><td width="10" class="issuehdr">#</td><td class="issuehdr" nowrap>Severity</td><td class="issuehdr">Location</td><td class="issuehdr">Object Type</td><td class="issuehdr">Object Name</td><td class="issuehdr">Property</td><td class="issuehdr">Description</td><td class="issuehdr">Qty</td></tr>
+					<tr><td width="10" class="issuecontent">1</td><td class="issuecontent" nowrap>Compile Error</td><td class="issuecontent">NewEnum</td><td class="issuecontent"></td><td class="issuecontent"></td><td class="issuecontent"></td><td class="issuecontent"><a href='http://www.vbtonet.com/ewis/ewi2068.aspx'>IUnknown object was not upgraded.</a></td><td class="issuecontent">2</td></tr>
+					<tr><td width="10" class="issuecontent">2</td><td class="issuecontent" nowrap>Runtime Warning</td><td class="issuecontent">LoadFromXML</td><td class="issuecontent">MSXML2.IXMLDOMNodeList</td><td class="issuecontent">oNodeList</td><td class="issuecontent">nextNode</td><td class="issuecontent"><a href='http://www.vbtonet.com/ewis/ewi2065.aspx'>MSXML2.IXMLDOMNodeList method oNodeList.nextNode has a new behavior.</a></td><td class="issuecontent">1</td></tr>
+				</table>
+			</td></tr>
+		<tr class="row">
+			<td class="content"><IMG alt="expand/collapse section" class="expandable" height="11"onclick=changepic() src="_UpgradeReport_Files/UpgradeReport_Plus.gif" width="9" child="issue5">&nbsp;PauloETL_ETLControl.vb</td>
+			<td class="content">PauloETL_ETLControl.cls</td>
+			<td class="content">Class Module</td>
+			<td class="content">
+		Upgraded with issues</td>	<td class="content">7</td>
+			<td class="content">0</td>
+			<td class="content">7</td>
+		</tr>
+			<tr class="collapsed" id="issue5" bgcolor="#ffffff"><td colspan="8">
+				<table width="97%" border="1" bordercolor="#dcdcdc" rules="cols" class="issuetable">
+				<tr><td colspan="8" class="issuetitle">Upgrade Issues for PauloETL_ETLControl.cls:</td></tr><tr><td width="10" class="issuehdr">#</td><td class="issuehdr" nowrap>Severity</td><td class="issuehdr">Location</td><td class="issuehdr">Object Type</td><td class="issuehdr">Object Name</td><td class="issuehdr">Property</td><td class="issuehdr">Description</td><td class="issuehdr">Qty</td></tr>
+					<tr><td width="10" class="issuecontent">1</td><td class="issuecontent" nowrap>Compile Error</td><td class="issuecontent">LoadXMLConfig</td><td class="issuecontent">MSXML2.DOMDocument60</td><td class="issuecontent">moXMLDoc</td><td class="issuecontent">async</td><td class="issuecontent"><a href='http://www.vbtonet.com/ewis/ewi2064.aspx'>MSXML2.DOMDocument60 property moXMLDoc.async was not upgraded.</a></td><td class="issuecontent">1</td></tr>
+					<tr><td width="10" class="issuecontent">2</td><td class="issuecontent" nowrap>Compile Error</td><td class="issuecontent">LoadXMLConfig</td><td class="issuecontent">MSXML2.DOMDocument60</td><td class="issuecontent">moXMLDoc</td><td class="issuecontent">parseError</td><td class="issuecontent"><a href='http://www.vbtonet.com/ewis/ewi2064.aspx'>MSXML2.DOMDocument60 property moXMLDoc.parseError was not upgraded.</a></td><td class="issuecontent">2</td></tr>
+					<tr><td width="10" class="issuecontent">3</td><td class="issuecontent" nowrap>Compile Error</td><td class="issuecontent">LoadXMLConfig</td><td class="issuecontent">MSXML2.DOMDocument60</td><td class="issuecontent">moXMLDoc</td><td class="issuecontent">Validate</td><td class="issuecontent"><a href='http://www.vbtonet.com/ewis/ewi2064.aspx'>MSXML2.DOMDocument60 method moXMLDoc.Validate was not upgraded.</a></td><td class="issuecontent">1</td></tr>
+					<tr><td width="10" class="issuecontent">4</td><td class="issuecontent" nowrap>Compile Error</td><td class="issuecontent">LoadXMLConfig</td><td class="issuecontent">MSXML2.DOMDocument60</td><td class="issuecontent">moXMLDoc</td><td class="issuecontent">validateOnParse</td><td class="issuecontent"><a href='http://www.vbtonet.com/ewis/ewi2064.aspx'>MSXML2.DOMDocument60 property moXMLDoc.validateOnParse was not upgraded.</a></td><td class="issuecontent">1</td></tr>
+					<tr><td width="10" class="issuecontent">5</td><td class="issuecontent" nowrap>Compile Error</td><td class="issuecontent">LoadXMLConfig</td><td class="issuecontent">MSXML2.IXMLDOMParseError</td><td class="issuecontent">moXMLDoc.parseError</td><td class="issuecontent">ErrorCode</td><td class="issuecontent"><a href='http://www.vbtonet.com/ewis/ewi2064.aspx'>MSXML2.IXMLDOMParseError property moXMLDoc.parseError.ErrorCode was not upgraded.</a></td><td class="issuecontent">1</td></tr>
+					<tr><td width="10" class="issuecontent">6</td><td class="issuecontent" nowrap>Compile Error</td><td class="issuecontent">LoadXMLConfig</td><td class="issuecontent">MSXML2.IXMLDOMParseError</td><td class="issuecontent">moXMLDoc.parseError</td><td class="issuecontent">srcText</td><td class="issuecontent"><a href='http://www.vbtonet.com/ewis/ewi2064.aspx'>MSXML2.IXMLDOMParseError property moXMLDoc.parseError.srcText was not upgraded.</a></td><td class="issuecontent">1</td></tr>
+				</table>
+			</td></tr>
+		<tr class="row">
+			<td class="content"><IMG alt="expand/collapse section" class="expandable" height="11"onclick=changepic() src="_UpgradeReport_Files/UpgradeReport_Plus.gif" width="9" child="issue6">&nbsp;PauloETL_frmETLCommand.vb</td>
+			<td class="content">PauloETL_frmETLCommand.frm</td>
+			<td class="content">Form</td>
+			<td class="content">
+		Upgraded with issues</td>	<td class="content">4</td>
+			<td class="content">0</td>
+			<td class="content">4</td>
+		</tr>
+			<tr class="collapsed" id="issue6" bgcolor="#ffffff"><td colspan="8">
+				<table width="97%" border="1" bordercolor="#dcdcdc" rules="cols" class="issuetable">
+				<tr><td colspan="8" class="issuetitle">Upgrade Issues for PauloETL_frmETLCommand.frm:</td></tr><tr><td width="10" class="issuehdr">#</td><td class="issuehdr" nowrap>Severity</td><td class="issuehdr">Location</td><td class="issuehdr">Object Type</td><td class="issuehdr">Object Name</td><td class="issuehdr">Property</td><td class="issuehdr">Description</td><td class="issuehdr">Qty</td></tr>
+					<tr><td width="10" class="issuecontent">1</td><td class="issuecontent" nowrap>Design Error</td><td class="issuecontent">(Layout)</td><td class="issuecontent">MSDataGridLib.DataGrid</td><td class="issuecontent">DataGrid1</td><td class="issuecontent">ColumnCount</td><td class="issuecontent"><a href='http://www.vbtonet.com/ewis/ewi2064.aspx'>MSDataGridLib.DataGrid method DataGrid1.ColumnCount was not upgraded.</a></td><td class="issuecontent">1</td></tr>
+					<tr><td width="10" class="issuecontent">2</td><td class="issuecontent" nowrap>Design Error</td><td class="issuecontent">(Layout)</td><td class="issuecontent">MSDataGridLib.DataGrid</td><td class="issuecontent">DataGrid1</td><td class="issuecontent">HeadFont</td><td class="issuecontent"><a href='http://www.vbtonet.com/ewis/ewi2064.aspx'>MSDataGridLib.DataGrid property DataGrid1.HeadFont was not upgraded.</a></td><td class="issuecontent">1</td></tr>
+					<tr><td width="10" class="issuecontent">3</td><td class="issuecontent" nowrap>Design Error</td><td class="issuecontent">(Layout)</td><td class="issuecontent">MSDataGridLib.DataGrid</td><td class="issuecontent">DataGrid1</td><td class="issuecontent">RowHeight</td><td class="issuecontent"><a href='http://www.vbtonet.com/ewis/ewi2064.aspx'>MSDataGridLib.DataGrid property DataGrid1.RowHeight was not upgraded.</a></td><td class="issuecontent">1</td></tr>
+					<tr><td width="10" class="issuecontent">4</td><td class="issuecontent" nowrap>Design Error</td><td class="issuecontent">(Layout)</td><td class="issuecontent">MSDataGridLib.DataGrid</td><td class="issuecontent">DataGrid1</td><td class="issuecontent">SplitCount</td><td class="issuecontent"><a href='http://www.vbtonet.com/ewis/ewi2064.aspx'>MSDataGridLib.DataGrid method DataGrid1.SplitCount was not upgraded.</a></td><td class="issuecontent">1</td></tr>
+				</table>
+			</td></tr>
+		<tr class="row">
+			<td class="content"><IMG alt="expand/collapse section" class="expandable" height="11"onclick=changepic() src="_UpgradeReport_Files/UpgradeReport_Plus.gif" width="9" child="issue7">&nbsp;PauloETL_frmSingleStep.vb</td>
+			<td class="content">PauloETL_frmSingleStep.frm</td>
+			<td class="content">Form</td>
+			<td class="content">
+		Upgraded</td>	<td class="content">0</td>
+			<td class="content">0</td>
+			<td class="content">0</td>
+		</tr>
+			<tr class="collapsed" id="issue7" bgcolor="#ffffff"><td colspan="8">
+				<table width="97%" border="1" bordercolor="#dcdcdc" rules="cols" class="issuetable">
+				<tr><td colspan="8" class="issuetitle">Upgrade Issues for PauloETL_frmSingleStep.frm:</td></tr><tr><td class="issuenone">None</td></tr>
+				</table>
+			</td></tr>
+		<tr class="row">
+			<td class="content"><IMG alt="expand/collapse section" class="expandable" height="11"onclick=changepic() src="_UpgradeReport_Files/UpgradeReport_Plus.gif" width="9" child="issue8">&nbsp;PauloETL_Globals.vb</td>
+			<td class="content">PauloETL_Globals.bas</td>
+			<td class="content">Module</td>
+			<td class="content">
+		Upgraded with issues</td>	<td class="content">2</td>
+			<td class="content">0</td>
+			<td class="content">2</td>
+		</tr>
+			<tr class="collapsed" id="issue8" bgcolor="#ffffff"><td colspan="8">
+				<table width="97%" border="1" bordercolor="#dcdcdc" rules="cols" class="issuetable">
+				<tr><td colspan="8" class="issuetitle">Upgrade Issues for PauloETL_Globals.bas:</td></tr><tr><td width="10" class="issuehdr">#</td><td class="issuehdr" nowrap>Severity</td><td class="issuehdr">Location</td><td class="issuehdr">Object Type</td><td class="issuehdr">Object Name</td><td class="issuehdr">Property</td><td class="issuehdr">Description</td><td class="issuehdr">Qty</td></tr>
+					<tr><td width="10" class="issuecontent">1</td><td class="issuecontent" nowrap>Compile Error</td><td class="issuecontent">GetADODataType</td><td class="issuecontent">ADODB.DataTypeEnum</td><td class="issuecontent">DataTypeEnum</td><td class="issuecontent">adEmpty</td><td class="issuecontent"><a href='http://www.vbtonet.com/ewis/ewi2070.aspx'>Constant adEmpty was not upgraded.</a></td><td class="issuecontent">1</td></tr>
+					<tr><td width="10" class="issuecontent">2</td><td class="issuecontent" nowrap>Compile Error</td><td class="issuecontent">GetADOParamDir</td><td class="issuecontent">ADODB.ParameterDirectionEnum</td><td class="issuecontent">ParameterDirectionEnum</td><td class="issuecontent">adParamUnknown</td><td class="issuecontent"><a href='http://www.vbtonet.com/ewis/ewi2070.aspx'>Constant adParamUnknown was not upgraded.</a></td><td class="issuecontent">1</td></tr>
+				</table>
+			</td></tr>
+		<tr valign="top">
+			<td class="foot">8 File(s)</td>
+			<td class="foot">&nbsp;</td>
+			<td class="foot">Modules: 1<br>Forms: 2<br>Class Modules: 5</td>
+			<td class="foot">
+		Upgraded: 8<BR>
+		Not upgraded: 0
+		</td>
+			<td class="foot">21</td>
+			<td class="foot">67</td>
+			<td class="foot">88</td>
+		</tr>
+		</table>
+		<p class="help">
+		</p>
+				<p>
+					<table class = "note">
+						<tr><td nowrap><b>Upgrade Settings</b></td></tr>
+						<tr><td nowrap><b>Log File:</b> PauloETL.log</td></tr>
+						<tr><td nowrap><b>Migrate Project To:</b> Library</td></tr>
+						<tr><td nowrap><b>Output Directory:</b> C:\Documents and Settings\Administrator\Desktop\PauloETL\src_.Net\Upgraded\</td></tr>
+						<tr><td nowrap><b>Output Name:</b> PauloETL.vbproj</td></tr>
+						<tr><td nowrap><b>Project Name:</b> PauloETL</td></tr>
+						<tr><td nowrap><b>Project Path:</b> C:\Documents and Settings\Administrator\Desktop\PauloETL\src\PauloETL.vbp</td></tr>
+					</table>
+				</p>
+	</body>
+</html>

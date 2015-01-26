@@ -1,0 +1,56 @@
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2012
+Project("{F184B08F-C81C-45f6-A57F-5ABD9991F28F}") = "PauloETL", "PauloETL.vbproj", "{31E152AE-636B-482A-93DE-6CD85673408C}"
+EndProject
+Project("{F184B08F-C81C-45f6-A57F-5ABD9991F28F}") = "PauloETLExecute", "PauloETLExecute.vbproj", "{D5F4D943-608E-4F55-9829-13D75F7F042B}"
+EndProject
+Project("{F184B08F-C81C-45f6-A57F-5ABD9991F28F}") = "PauloETLGUI", "PauloETLGUI.vbproj", "{01D65BC5-8F9D-4FE7-8778-166D0B106856}"
+EndProject
+Project("{2150E333-8FDC-42a3-9474-1A3956D46DE8}") = "PauloETL.vbproj", "PauloETL.vbproj", "{C71F786C-3F5B-426E-AE2C-51A85881D2A6}"
+EndProject
+Project("{2150E333-8FDC-42a3-9474-1A3956D46DE8}") = "PauloETLExecute.vbproj", "PauloETLExecute.vbproj", "{0F1C8A5A-789C-42E7-9AD1-A1C7D8E356E0}"
+EndProject
+Project("{2150E333-8FDC-42a3-9474-1A3956D46DE8}") = "PauloETLGUI.vbproj", "PauloETLGUI.vbproj", "{8B77DCBA-4F08-49AF-AC85-B76EEB571196}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Mixed Platforms = Debug|Mixed Platforms
+		Debug|x86 = Debug|x86
+		Release|Mixed Platforms = Release|Mixed Platforms
+		Release|x86 = Release|x86
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{31E152AE-636B-482A-93DE-6CD85673408C}.Debug|Mixed Platforms.ActiveCfg = Debug|x86
+		{31E152AE-636B-482A-93DE-6CD85673408C}.Debug|Mixed Platforms.Build.0 = Debug|x86
+		{31E152AE-636B-482A-93DE-6CD85673408C}.Debug|x86.ActiveCfg = Debug|x86
+		{31E152AE-636B-482A-93DE-6CD85673408C}.Debug|x86.Build.0 = Debug|x86
+		{31E152AE-636B-482A-93DE-6CD85673408C}.Release|Mixed Platforms.ActiveCfg = Release|x86
+		{31E152AE-636B-482A-93DE-6CD85673408C}.Release|Mixed Platforms.Build.0 = Release|x86
+		{31E152AE-636B-482A-93DE-6CD85673408C}.Release|x86.ActiveCfg = Release|x86
+		{31E152AE-636B-482A-93DE-6CD85673408C}.Release|x86.Build.0 = Release|x86
+		{D5F4D943-608E-4F55-9829-13D75F7F042B}.Debug|Mixed Platforms.ActiveCfg = Debug|x86
+		{D5F4D943-608E-4F55-9829-13D75F7F042B}.Debug|Mixed Platforms.Build.0 = Debug|x86
+		{D5F4D943-608E-4F55-9829-13D75F7F042B}.Debug|x86.ActiveCfg = Debug|x86
+		{D5F4D943-608E-4F55-9829-13D75F7F042B}.Debug|x86.Build.0 = Debug|x86
+		{D5F4D943-608E-4F55-9829-13D75F7F042B}.Release|Mixed Platforms.ActiveCfg = Release|x86
+		{D5F4D943-608E-4F55-9829-13D75F7F042B}.Release|Mixed Platforms.Build.0 = Release|x86
+		{D5F4D943-608E-4F55-9829-13D75F7F042B}.Release|x86.ActiveCfg = Release|x86
+		{D5F4D943-608E-4F55-9829-13D75F7F042B}.Release|x86.Build.0 = Release|x86
+		{01D65BC5-8F9D-4FE7-8778-166D0B106856}.Debug|Mixed Platforms.ActiveCfg = Debug|x86
+		{01D65BC5-8F9D-4FE7-8778-166D0B106856}.Debug|Mixed Platforms.Build.0 = Debug|x86
+		{01D65BC5-8F9D-4FE7-8778-166D0B106856}.Debug|x86.ActiveCfg = Debug|x86
+		{01D65BC5-8F9D-4FE7-8778-166D0B106856}.Debug|x86.Build.0 = Debug|x86
+		{01D65BC5-8F9D-4FE7-8778-166D0B106856}.Release|Mixed Platforms.ActiveCfg = Release|x86
+		{01D65BC5-8F9D-4FE7-8778-166D0B106856}.Release|Mixed Platforms.Build.0 = Release|x86
+		{01D65BC5-8F9D-4FE7-8778-166D0B106856}.Release|x86.ActiveCfg = Release|x86
+		{01D65BC5-8F9D-4FE7-8778-166D0B106856}.Release|x86.Build.0 = Release|x86
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{31E152AE-636B-482A-93DE-6CD85673408C} = {C71F786C-3F5B-426E-AE2C-51A85881D2A6}
+		{D5F4D943-608E-4F55-9829-13D75F7F042B} = {0F1C8A5A-789C-42E7-9AD1-A1C7D8E356E0}
+		{01D65BC5-8F9D-4FE7-8778-166D0B106856} = {8B77DCBA-4F08-49AF-AC85-B76EEB571196}
+	EndGlobalSection
+EndGlobal

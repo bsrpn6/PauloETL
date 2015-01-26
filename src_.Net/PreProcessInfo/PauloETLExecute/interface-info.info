@@ -1,0 +1,1 @@
+[segment [list* "PauloETLExecute.MainModule" [segment [&interface-sub-decl [segment] [&void] "Main" (&arg-list) #f] [&interface-sub-decl [segment] [&void] "GetArgument" (&arg-list [&arg (&byval) [&string] "sCommand"] [&arg (&byval) [&string] "ArgName"] [&arg [&string] "ArgVal"]) #f]]]]

@@ -1,0 +1,238 @@
+<?xml version="1.0"?>
+<?mso-application progid="Excel.Sheet"?>
+<Workbook xmlns="urn:schemas-microsoft-com:office:spreadsheet"
+xmlns:o="urn:schemas-microsoft-com:office:office"
+ xmlns:x="urn:schemas-microsoft-com:office:excel"
+xmlns:ss="urn:schemas-microsoft-com:office:spreadsheet"
+xmlns:html="http://www.w3.org/TR/REC-html40">
+<Styles>
+<Style ss:ID="s21">
+<Font x:Family="Swiss" ss:Bold="1"/>
+</Style>
+<Style ss:ID="s22">
+<Font x:Family="Swiss" ss:Size="11" ss:Bold="1"/>
+</Style><Style ss:ID="firstNormalCell">
+   <Borders>
+    <Border ss:Position="Left" ss:LineStyle="Continuous" ss:Weight="2"/>
+   </Borders>
+  </Style>
+  <Style ss:ID="lastNormalCell">
+   <Borders>
+    <Border ss:Position="Right" ss:LineStyle="Continuous" ss:Weight="2"/>
+   </Borders>
+  </Style>
+  <Style ss:ID="lastRowFirstCell">
+   <Borders>
+    <Border ss:Position="Bottom" ss:LineStyle="Continuous" ss:Weight="2"/>
+    <Border ss:Position="Left" ss:LineStyle="Continuous" ss:Weight="2"/>
+   </Borders>
+  </Style>
+  <Style ss:ID="lastRowCell">
+   <Borders>
+    <Border ss:Position="Bottom" ss:LineStyle="Continuous" ss:Weight="2"/>
+   </Borders>
+  </Style>
+  <Style ss:ID="lastRowLastCell">
+   <Borders>
+    <Border ss:Position="Bottom" ss:LineStyle="Continuous" ss:Weight="2"/>
+    <Border ss:Position="Right" ss:LineStyle="Continuous" ss:Weight="2"/>
+   </Borders>
+  </Style>
+  <Style ss:ID="headerFirstCell">
+   <Borders>
+    <Border ss:Position="Bottom" ss:LineStyle="Continuous" ss:Weight="2"/>
+    <Border ss:Position="Left" ss:LineStyle="Continuous" ss:Weight="2"/>
+    <Border ss:Position="Top" ss:LineStyle="Continuous" ss:Weight="2"/>
+   </Borders>
+   <Font x:Family="Swiss" ss:Bold="1"/>
+  </Style>
+  <Style ss:ID="headerCell">
+   <Borders>
+    <Border ss:Position="Bottom" ss:LineStyle="Continuous" ss:Weight="2"/>
+    <Border ss:Position="Top" ss:LineStyle="Continuous" ss:Weight="2"/>
+   </Borders>
+   <Font x:Family="Swiss" ss:Bold="1"/>
+  </Style>
+  <Style ss:ID="headerLastCell">
+   <Borders>
+    <Border ss:Position="Bottom" ss:LineStyle="Continuous" ss:Weight="2"/>
+    <Border ss:Position="Right" ss:LineStyle="Continuous" ss:Weight="2"/>
+    <Border ss:Position="Top" ss:LineStyle="Continuous" ss:Weight="2"/>
+   </Borders>
+   <Font x:Family="Swiss" ss:Bold="1"/>
+  </Style>
+</Styles>
+<Worksheet ss:Name="Detailed LOC Report">
+<Table>
+<Column ss:Width="204"/>
+<Column ss:Width="126"/>
+<Row class="text">
+<Cell ss:StyleID="s22" id="h1"> <Data ss:Type="String">Lines of code per project</Data></Cell>
+<Cell ss:StyleID="s22" id="h1"> <Data ss:Type="String">LOC</Data></Cell>
+</Row>
+<Row class="text">
+<Cell ss:StyleID="s21" id="h2"> <Data ss:Type="String">PauloETL.vbp</Data></Cell>
+<Cell ss:StyleID="s21" id="h2"> <Data ss:Type="Number">809</Data></Cell>
+</Row>
+<Row class="text">
+<Cell ss:StyleID="s21" id="h2"> <Data ss:Type="String"></Data></Cell>
+<Cell ss:StyleID="s21" id="h2"> <Data ss:Type="String"></Data></Cell>
+<Cell ss:StyleID="s21" id="h2"> <Data ss:Type="String">Code</Data></Cell>
+<Cell ss:StyleID="s21" id="h2"> <Data ss:Type="String">Comment</Data></Cell>
+<Cell ss:StyleID="s21" id="h2"> <Data ss:Type="String">Blank</Data></Cell>
+<Cell ss:StyleID="s21" id="h2"> <Data ss:Type="String">Design</Data></Cell>
+</Row>
+<Row class="text">
+<Cell> <Data ss:Type="String">\PauloETL_ETLControl.cls</Data></Cell>
+<Cell> <Data ss:Type="String"></Data></Cell>
+<Cell> <Data ss:Type="Number">141</Data></Cell>
+<Cell> <Data ss:Type="Number">25</Data></Cell>
+<Cell> <Data ss:Type="Number">31</Data></Cell>
+<Cell> <Data ss:Type="Number">16</Data></Cell>
+<Cell> <Data ss:Type="String"></Data></Cell>
+<Cell> <Data ss:Type="String"></Data></Cell>
+</Row>
+<Row class="text">
+<Cell> <Data ss:Type="String">\PauloETL_ETLConnections.cls</Data></Cell>
+<Cell> <Data ss:Type="String"></Data></Cell>
+<Cell> <Data ss:Type="Number">53</Data></Cell>
+<Cell> <Data ss:Type="Number">14</Data></Cell>
+<Cell> <Data ss:Type="Number">15</Data></Cell>
+<Cell> <Data ss:Type="Number">17</Data></Cell>
+<Cell> <Data ss:Type="String"></Data></Cell>
+<Cell> <Data ss:Type="String"></Data></Cell>
+</Row>
+<Row class="text">
+<Cell> <Data ss:Type="String">\PauloETL_ETLConnection.cls</Data></Cell>
+<Cell> <Data ss:Type="String"></Data></Cell>
+<Cell> <Data ss:Type="Number">69</Data></Cell>
+<Cell> <Data ss:Type="Number">1</Data></Cell>
+<Cell> <Data ss:Type="Number">21</Data></Cell>
+<Cell> <Data ss:Type="Number">15</Data></Cell>
+<Cell> <Data ss:Type="String"></Data></Cell>
+<Cell> <Data ss:Type="String"></Data></Cell>
+</Row>
+<Row class="text">
+<Cell> <Data ss:Type="String">\PauloETL_Globals.bas</Data></Cell>
+<Cell> <Data ss:Type="String"></Data></Cell>
+<Cell> <Data ss:Type="Number">73</Data></Cell>
+<Cell> <Data ss:Type="Number">1</Data></Cell>
+<Cell> <Data ss:Type="Number">19</Data></Cell>
+<Cell> <Data ss:Type="Number">1</Data></Cell>
+<Cell> <Data ss:Type="String"></Data></Cell>
+<Cell> <Data ss:Type="String"></Data></Cell>
+</Row>
+<Row class="text">
+<Cell> <Data ss:Type="String">\PauloETL_ETLCommands.cls</Data></Cell>
+<Cell> <Data ss:Type="String"></Data></Cell>
+<Cell> <Data ss:Type="Number">54</Data></Cell>
+<Cell> <Data ss:Type="Number">14</Data></Cell>
+<Cell> <Data ss:Type="Number">12</Data></Cell>
+<Cell> <Data ss:Type="Number">17</Data></Cell>
+<Cell> <Data ss:Type="String"></Data></Cell>
+<Cell> <Data ss:Type="String"></Data></Cell>
+</Row>
+<Row class="text">
+<Cell> <Data ss:Type="String">\PauloETL_ETLCommand.cls</Data></Cell>
+<Cell> <Data ss:Type="String"></Data></Cell>
+<Cell> <Data ss:Type="Number">207</Data></Cell>
+<Cell> <Data ss:Type="Number">12</Data></Cell>
+<Cell> <Data ss:Type="Number">24</Data></Cell>
+<Cell> <Data ss:Type="Number">15</Data></Cell>
+<Cell> <Data ss:Type="String"></Data></Cell>
+<Cell> <Data ss:Type="String"></Data></Cell>
+</Row>
+<Row class="text">
+<Cell> <Data ss:Type="String">\PauloETL_frmETLCommand.frm</Data></Cell>
+<Cell> <Data ss:Type="String"></Data></Cell>
+<Cell> <Data ss:Type="Number">1</Data></Cell>
+<Cell> <Data ss:Type="Number">0</Data></Cell>
+<Cell> <Data ss:Type="Number">1</Data></Cell>
+<Cell> <Data ss:Type="Number">92</Data></Cell>
+<Cell> <Data ss:Type="String"></Data></Cell>
+<Cell> <Data ss:Type="String"></Data></Cell>
+</Row>
+<Row class="text">
+<Cell> <Data ss:Type="String">\PauloETL_frmSingleStep.frm</Data></Cell>
+<Cell> <Data ss:Type="String"></Data></Cell>
+<Cell> <Data ss:Type="Number">4</Data></Cell>
+<Cell> <Data ss:Type="Number">0</Data></Cell>
+<Cell> <Data ss:Type="Number">1</Data></Cell>
+<Cell> <Data ss:Type="Number">34</Data></Cell>
+<Cell> <Data ss:Type="String"></Data></Cell>
+<Cell> <Data ss:Type="String"></Data></Cell>
+</Row>
+<Row class="text">
+<Cell> <Data ss:Type="String"></Data></Cell>
+</Row>
+<Row class="text">
+<Cell ss:StyleID="s21" id="h2"> <Data ss:Type="String">PauloETLExecute.vbp</Data></Cell>
+<Cell ss:StyleID="s21" id="h2"> <Data ss:Type="Number">33</Data></Cell>
+</Row>
+<Row class="text">
+<Cell ss:StyleID="s21" id="h2"> <Data ss:Type="String"></Data></Cell>
+<Cell ss:StyleID="s21" id="h2"> <Data ss:Type="String"></Data></Cell>
+<Cell ss:StyleID="s21" id="h2"> <Data ss:Type="String">Code</Data></Cell>
+<Cell ss:StyleID="s21" id="h2"> <Data ss:Type="String">Comment</Data></Cell>
+<Cell ss:StyleID="s21" id="h2"> <Data ss:Type="String">Blank</Data></Cell>
+<Cell ss:StyleID="s21" id="h2"> <Data ss:Type="String">Design</Data></Cell>
+</Row>
+<Row class="text">
+<Cell> <Data ss:Type="String">\PauloETLExecute_MainModule.bas</Data></Cell>
+<Cell> <Data ss:Type="String"></Data></Cell>
+<Cell> <Data ss:Type="Number">32</Data></Cell>
+<Cell> <Data ss:Type="Number">1</Data></Cell>
+<Cell> <Data ss:Type="Number">6</Data></Cell>
+<Cell> <Data ss:Type="Number">1</Data></Cell>
+<Cell> <Data ss:Type="String"></Data></Cell>
+<Cell> <Data ss:Type="String"></Data></Cell>
+</Row>
+<Row class="text">
+<Cell> <Data ss:Type="String"></Data></Cell>
+</Row>
+<Row class="text">
+<Cell ss:StyleID="s21" id="h2"> <Data ss:Type="String">PauloETLGUI.vbp</Data></Cell>
+<Cell ss:StyleID="s21" id="h2"> <Data ss:Type="Number">311</Data></Cell>
+</Row>
+<Row class="text">
+<Cell ss:StyleID="s21" id="h2"> <Data ss:Type="String"></Data></Cell>
+<Cell ss:StyleID="s21" id="h2"> <Data ss:Type="String"></Data></Cell>
+<Cell ss:StyleID="s21" id="h2"> <Data ss:Type="String">Code</Data></Cell>
+<Cell ss:StyleID="s21" id="h2"> <Data ss:Type="String">Comment</Data></Cell>
+<Cell ss:StyleID="s21" id="h2"> <Data ss:Type="String">Blank</Data></Cell>
+<Cell ss:StyleID="s21" id="h2"> <Data ss:Type="String">Design</Data></Cell>
+</Row>
+<Row class="text">
+<Cell> <Data ss:Type="String">\PauloETLGUI_frmETLMain.frm</Data></Cell>
+<Cell> <Data ss:Type="String"></Data></Cell>
+<Cell> <Data ss:Type="Number">107</Data></Cell>
+<Cell> <Data ss:Type="Number">4</Data></Cell>
+<Cell> <Data ss:Type="Number">26</Data></Cell>
+<Cell> <Data ss:Type="Number">125</Data></Cell>
+<Cell> <Data ss:Type="String"></Data></Cell>
+<Cell> <Data ss:Type="String"></Data></Cell>
+</Row>
+<Row class="text">
+<Cell> <Data ss:Type="String">\PauloETLGUI_frmJobView.frm</Data></Cell>
+<Cell> <Data ss:Type="String"></Data></Cell>
+<Cell> <Data ss:Type="Number">31</Data></Cell>
+<Cell> <Data ss:Type="Number">0</Data></Cell>
+<Cell> <Data ss:Type="Number">11</Data></Cell>
+<Cell> <Data ss:Type="Number">48</Data></Cell>
+<Cell> <Data ss:Type="String"></Data></Cell>
+<Cell> <Data ss:Type="String"></Data></Cell>
+</Row>
+<Row class="text">
+<Cell> <Data ss:Type="String"></Data></Cell>
+</Row>
+<Row class="text">
+<Cell ss:StyleID="s21" id="h2"> <Data ss:Type="String">Total lines of code:</Data></Cell>
+<Cell ss:StyleID="s21" id="h2"> <Data ss:Type="String"></Data></Cell>
+<Cell ss:StyleID="s21" id="h2"> <Data ss:Type="Number">1153</Data></Cell>
+</Row>
+<Row class="text">
+<Cell> <Data ss:Type="String"></Data></Cell>
+</Row>
+</Table>
+</Worksheet>
+</Workbook>
