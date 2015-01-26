@@ -1,0 +1,108 @@
+[Root]
+Most Recent Package=PauloETL Setup Package 1
+
+
+[Package|PauloETL Setup Package 1|Root]
+SubWizProgID=PDWizard.SetupPkgSubWiz
+BuildFolder=C:\VB\PauloETL\Package
+
+[Package|PauloETL Setup Package 1|Configure DAO ISAMs]
+Applicable=No
+
+[Package|PauloETL Setup Package 1|Configure DAO ODBC]
+JetWorkspace=
+ODBCDirect=
+
+[Package|PauloETL Setup Package 1|Files Found]
+
+[Package|PauloETL Setup Package 1|Files Released]
+
+[Package|PauloETL Setup Package 1|Missing Dependency Information]
+C:\VB\PauloETL\PauloETL.dll=
+C:\WINDOWS\system32\msxml6.dll=
+
+[Package|PauloETL Setup Package 1|Out-of-Date Dependency Information]
+
+[Package|PauloETL Setup Package 1|Files Added]
+C:\VB\PauloETL\PauloETL.xml=
+C:\VB\PauloETL\ETLSchema.xsd=
+
+[Package|PauloETL Setup Package 1|Files Removed]
+c:\program files\microsoft visual studio\vb98\wizards\pdwizard\redist\mdac_typ.exe=
+c:\program files\common files\designer\msderun.dll=
+c:\windows\system32\msxml6.dll=
+
+[Package|PauloETL Setup Package 1|Files In Project]
+C:\VB\PauloETL\PauloETLGUI.exe=Yes
+C:\WINDOWS\system32\msvbvm60.dll=Yes
+C:\Program Files\Microsoft Visual Studio\VB98\Wizards\PDWizard\Redist\OLEAUT32.DLL=Yes
+C:\Program Files\Microsoft Visual Studio\VB98\Wizards\PDWizard\Redist\OLEPRO32.DLL=Yes
+C:\Program Files\Microsoft Visual Studio\VB98\Wizards\PDWizard\Redist\ASYCFILT.DLL=Yes
+C:\Program Files\Microsoft Visual Studio\VB98\Wizards\PDWizard\Redist\STDOLE2.TLB=Yes
+C:\Program Files\Microsoft Visual Studio\VB98\Wizards\PDWizard\Redist\COMCAT.DLL=Yes
+C:\WINDOWS\system32\msxml6.dll=No
+C:\VB\PauloETL\PauloETL.dll=Yes
+C:\WINDOWS\system32\MSCOMCTL.OCX=Yes
+C:\Program Files\Common Files\designer\MSDERUN.DLL=No
+C:\Program Files\Microsoft Visual Studio\VB98\Wizards\PDWizard\Redist\MDAC_TYP.EXE=No
+C:\Program Files\Microsoft Visual Studio\VB98\Wizards\PDWizard\SETUP.EXE=Yes
+C:\Program Files\Microsoft Visual Studio\VB98\Wizards\PDWizard\SETUP1.EXE=Yes
+C:\WINDOWS\system32\VB6STKIT.DLL=Yes
+C:\Program Files\Microsoft Visual Studio\VB98\Wizards\PDWizard\ST6UNST.EXE=Yes
+C:\VB\PauloETL\PauloETL.xml=Yes
+C:\VB\PauloETL\ETLSchema.xsd=Yes
+
+[Package|PauloETL Setup Package 1|Configure Registry Files]
+Applicable=No
+
+[Package|PauloETL Setup Package 1|Configure Remote Servers]
+Applicable=No
+
+[Package|PauloETL Setup Package 1|Install Locations]
+C:\VB\PauloETL\PauloETLGUI.exe=$(AppPath)
+C:\WINDOWS\system32\msvbvm60.dll=$(WinSysPathSysFile)
+C:\Program Files\Microsoft Visual Studio\VB98\Wizards\PDWizard\Redist\OLEAUT32.DLL=$(WinSysPathSysFile)
+C:\Program Files\Microsoft Visual Studio\VB98\Wizards\PDWizard\Redist\OLEPRO32.DLL=$(WinSysPathSysFile)
+C:\Program Files\Microsoft Visual Studio\VB98\Wizards\PDWizard\Redist\ASYCFILT.DLL=$(WinSysPathSysFile)
+C:\Program Files\Microsoft Visual Studio\VB98\Wizards\PDWizard\Redist\STDOLE2.TLB=$(WinSysPathSysFile)
+C:\Program Files\Microsoft Visual Studio\VB98\Wizards\PDWizard\Redist\COMCAT.DLL=$(WinSysPathSysFile)
+C:\VB\PauloETL\PauloETL.dll=$(WinSysPath)
+C:\WINDOWS\system32\MSCOMCTL.OCX=$(WinSysPath)
+C:\Program Files\Microsoft Visual Studio\VB98\Wizards\PDWizard\SETUP.EXE=$(AppPath)
+C:\Program Files\Microsoft Visual Studio\VB98\Wizards\PDWizard\SETUP1.EXE=$(WinPath)
+C:\WINDOWS\system32\VB6STKIT.DLL=$(WinSysPathSysFile)
+C:\Program Files\Microsoft Visual Studio\VB98\Wizards\PDWizard\ST6UNST.EXE=$(WinPath)
+C:\VB\PauloETL\PauloETL.xml=$(AppPath)
+C:\VB\PauloETL\ETLSchema.xsd=$(AppPath)
+
+[Package|PauloETL Setup Package 1|Configure Shared Files]
+Applicable=Yes
+C:\VB\PauloETL\PauloETLGUI.exe=No
+C:\VB\PauloETL\PauloETL.xml=No
+C:\VB\PauloETL\ETLSchema.xsd=No
+
+[Package|PauloETL Setup Package 1|Distribution]
+Type=single
+Size=
+Title=Paulo ETL Library
+
+[Package|PauloETL Setup Package 1|IconGroups]
+Group0=Paulo ETL Library
+PrivateGroup0=-1
+Parent0=$(Programs)
+
+[Package|PauloETL Setup Package 1|Paulo ETL Library]
+Icon1=PauloETLGUI.exe
+Title1=Paulo ETL Debugger
+StartIn1=$(AppPath)
+Key1=Icon1
+
+[Package|PauloETL Setup Package 1|Package]
+PackageFolder=C:\VB\PauloETL\Package
+ProjectFolder=C:\VB\PauloETL\src
+ServerSideCab=
+File1=C:\VB\PauloETL\Package\setup.exe
+File2=C:\VB\PauloETL\Package\Setup.Lst
+File3=C:\VB\PauloETL\Package\PauloETLGUI.CAB
+Handler1=PDWizard.FolderDplySubWiz
+Handler2=PDWizard.WebPostDplySubWiz

@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- edited with XMLSpy v2008 (http://www.altova.com) by Stephanie Giovannini (Barry-Wehmiller Design Group) -->
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified" attributeFormDefault="unqualified">
+	<xs:element name="root">
+		<xs:annotation>
+			<xs:documentation>Comment describing your root element</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="connections">
+					<xs:complexType>
+						<xs:sequence>
+							<xs:element name="connection" type="connection" maxOccurs="unbounded"/>
+						</xs:sequence>
+					</xs:complexType>
+				</xs:element>
+				<xs:element name="jobs">
+					<xs:complexType>
+						<xs:sequence>
+							<xs:element name="job" type="job" maxOccurs="unbounded"/>
+						</xs:sequence>
+					</xs:complexType>
+				</xs:element>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	<xs:complexType name="connection">
+		<xs:attribute name="id" type="xs:string" use="required"/>
+		<xs:attribute name="name" type="xs:string" use="required"/>
+		<xs:attribute name="connstring" type="xs:string" use="required"/>
+		<xs:attribute name="uid" type="xs:string" use="required"/>
+		<xs:attribute name="pwd" type="xs:string" use="required"/>
+	</xs:complexType>
+	<xs:complexType name="param">
+		<xs:attribute name="name" type="xs:string" use="required"/>
+		<xs:attribute name="source" type="xs:string" use="required"/>
+		<xs:attribute name="type" type="adodatatype" use="required"/>
+		<xs:attribute name="direction" type="adoparamdirection" use="required"/>
+		<xs:attribute name="size">
+			<xs:simpleType>
+				<xs:restriction base="xs:integer">
+					<xs:minInclusive value="0"/>
+				</xs:restriction>
+			</xs:simpleType>
+		</xs:attribute>
+	</xs:complexType>
+	<xs:complexType name="command" mixed="true">
+		<xs:sequence>
+			<xs:element name="params">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="param" type="param" minOccurs="0" maxOccurs="unbounded"/>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="foreach">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="command" type="command" minOccurs="0" maxOccurs="unbounded"/>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+		</xs:sequence>
+		<xs:attribute name="name" type="xs:string" use="required"/>
+		<xs:attribute name="connid" type="xs:string" use="required"/>
+		<xs:attribute name="rowset" type="xs:boolean" use="required"/>
+		<xs:attribute name="begintran" type="xs:boolean" use="required"/>
+		<xs:attribute name="enabled" type="xs:boolean" use="required"/>
+	</xs:complexType>
+	<xs:complexType name="step">
+		<xs:sequence>
+			<xs:element name="command" type="command"/>
+		</xs:sequence>
+		<xs:attribute name="name" use="required"/>
+	</xs:complexType>
+	<xs:complexType name="job">
+		<xs:sequence>
+			<xs:element name="step" type="step" maxOccurs="unbounded"/>
+		</xs:sequence>
+		<xs:attribute name="id" type="xs:string" use="required"/>
+		<xs:attribute name="name" type="xs:string" use="required"/>
+	</xs:complexType>
+	<xs:simpleType name="adodatatype" final="">
+		<xs:restriction base="xs:string">
+			<xs:whiteSpace value="collapse"/>
+			<xs:enumeration value="adboolean"/>
+			<xs:enumeration value="adchar"/>
+			<xs:enumeration value="addate"/>
+			<xs:enumeration value="addouble"/>
+			<xs:enumeration value="adinteger"/>
+			<xs:enumeration value="advarchar"/>
+			<xs:enumeration value="adsingle"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="adoparamdirection">
+		<xs:restriction base="xs:string">
+			<xs:whiteSpace value="collapse"/>
+			<xs:enumeration value="adparaminput"/>
+			<xs:enumeration value="adparaminputoutput"/>
+			<xs:enumeration value="adparamoutput"/>
+			<xs:enumeration value="adparamreturnvalue"/>
+		</xs:restriction>
+	</xs:simpleType>
+</xs:schema>

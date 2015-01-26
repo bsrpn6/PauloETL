@@ -1,0 +1,292 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--This File Configures Interface Between Oracle and SQL Server for PauloWIP System.-->
+<!--  Rev 1 10/14/2010 Marc Bertrand - Modified to Access New Field For Temper Delay Setting-->
+<root xsi:noNamespaceSchemaLocation="ETLSchema.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	<connections>
+		<connection id="SQL" connstring="Provider='sqloledb';Data Source='STLSRVR03.PAULO.COM';Initial Catalog='PauloWIP'" name="Paulo Site WIP Database" uid="process" pwd="process"/>
+		<connection id="ORACLE" connstring="Provider=OraOLEDB.Oracle;Data Source=STLDAQ.PAULO.COM;DistribTX=0;PLSQLRSet=1;" name="Paulo Oracle PICS Database" uid="process_access" pwd="givemedata"/>
+	</connections>
+	<jobs>
+		<job id="Main" name="Upload Events and Download Schedule/Shop Order Information From Oracle">
+			<step name="Set Oracle Role">
+				<command name="Set Oracle Role" rowset="false" begintran="false" connid="ORACLE" enabled="true">
+					<!--This Command calls oiBHTSchedCCDownloadStart which Initializes Cost Center for Download -->
+					<![CDATA[SET ROLE equipment_user IDENTIFIED BY equipment]]>
+					<params/>
+					<foreach/>
+				</command>
+			</step>
+			<step name="Upload Events To Oracle">
+				<command name="Get Equipment Events To Send" enabled="true" rowset="true" begintran="false" connid="SQL">
+					<!--This Command calls oiBHTEquipmentEventsGet which Retrieves Rowset Containing Data Rows to Send To Oracle -->
+					<![CDATA[EXEC dbo.oiBHTEquipmentEventsGet]]>
+					<params/>
+					<foreach>
+						<command name="Send Equipment Event To Oracle" enabled="true" rowset="true" begintran="false" connid="ORACLE">
+							<!--This Command calls qdaq$PK_SCHEDULE_IQ_PLC.GetQueue which retrieves data from Oracle -->
+							<![CDATA[{call  qdaq$PK_SCHEDULE_IQ_PLC.SendEquipmentEvent (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)}]]>
+							<params>
+								<param  name="Al_PicsID" source="PICSID" type="adinteger" direction="adparaminput"/>
+								<param  name="Al_Schedule" source="ScheduleID" type="adinteger" direction="adparaminput"/>
+								<param  name="Al_Subset" source="ScheduleSubSetID" type="adinteger" direction="adparaminput"/>
+								<param  name="Al_StepOrder" source="ScheduleDetailStepNum" type="adinteger" direction="adparaminput"/>
+								<param  name="Al_Detail" source="ScheduleDetailSeq" type="adinteger" direction="adparaminput"/>
+								<param  name="Al_CC" source="CCID" type="adinteger" direction="adparaminput"/>
+								<param  name="Al_Equiment" source="EquipID" type="adinteger" direction="adparaminput"/>
+								<param  name="Adt_Timestamp" source="EventTimeStamp" type="addate" direction="adparaminput"/>
+								<param  name="Al_EventCode" source="OracleEventCode" type="adinteger" direction="adparaminput"/>
+								<param  name="Al_Activity" source="ActivityZone" type="adinteger" direction="adparaminput"/>
+								<param  name="Al_RecipeType" source="RecipeType" type="adinteger" direction="adparaminput"/>
+								<param  name="Al_RecipeTime" source="RecipeTime" type="adinteger" direction="adparaminput"/>
+								<param  name="Al_RecipeTemp" source="RecipeTemp" type="adinteger" direction="adparaminput"/>
+							</params>
+							<foreach>
+								<command name="Update Event Row In SQL" enabled="true" rowset="false" begintran="false" connid="SQL">
+									<!--This Command calls oiBHTEquipmentEventSent which Updates Row in SQL Server to Mark Success/Failure -->
+									<![CDATA[EXEC dbo.oiBHTEquipmentEventSent ?, ?]]>
+									<params>
+										<param name="OI_EventID" source=".OI_EventID" type="adinteger" direction="adparaminput"/>
+										<param name="OracleReturnCode" source="RETURN_CODE" type="adinteger" direction="adparaminput"/>
+									</params>
+									<foreach/>
+								</command>
+							</foreach>
+						</command>
+					</foreach>
+				</command>
+			</step>
+			<step name="Upload Shop Order Weights To Oracle">
+				<command name="Get Shop Order Weights To Send" enabled="true" rowset="true" begintran="false" connid="SQL">
+					<!--This Command calls oiBHTShopOrderWeightsGet which Retrieves Rowset Containing Data Rows to Send To Oracle -->
+					<![CDATA[EXEC dbo.oiBHTShopOrderWeightsGet]]>
+					<params/>
+					<foreach>
+						<command name="Send Shop Order Weight To Oracle" enabled="true" rowset="true" begintran="false" connid="ORACLE">
+							<!--This Command calls qdaq$PK_SCHEDULE_IQ_PLC.SetActualWeight to send event to Oracle -->
+							<![CDATA[{call  qdaq$PK_SCHEDULE_IQ_PLC.SetActualWeight (?, ?, ?, ?, ?, ?, ?, ?)}]]>
+							<params>
+								<param  name="Al_Schedule" source="ScheduleID" type="adinteger" direction="adparaminput"/>
+								<param  name="Al_Subset" source="ScheduleSubSetID" type="adinteger" direction="adparaminput"/>
+								<param  name="Al_PicsID" source="PICSID" type="adinteger" direction="adparaminput"/>
+								<param  name="Al_CC" source="CCID" type="adinteger" direction="adparaminput"/>
+								<param  name="Al_Equipment" source="EquipID" type="adinteger" direction="adparaminput"/>
+								<param  name="Al_ShopOrderID" source="ShopOrderID" type="adinteger" direction="adparaminput"/>
+								<param  name="Al_ShopOrderSubsetID" source="ShopOrderSubsetID" type="adinteger" direction="adparaminput"/>
+								<param  name="Al_Weight" source="Weight" type="adsingle" direction="adparaminput"/>
+							</params>
+							<foreach>
+								<command name="Update Event Row In SQL" enabled="true" rowset="false" begintran="false" connid="SQL">
+									<!--This Command calls oiBHTShopOrderWeightSent which Updates Row in SQL Server to Mark Success/Failure -->
+									<![CDATA[EXEC dbo.oiBHTShopOrderWeightSent ?, ?]]>
+									<params>
+										<param name="OI_EventID" source=".OI_EventID" type="adinteger" direction="adparaminput"/>
+										<param name="OracleReturnCode" source="RETURN_CODE" type="adinteger" direction="adparaminput"/>
+									</params>
+									<foreach/>
+								</command>
+							</foreach>
+						</command>
+					</foreach>
+				</command>
+			</step>
+			<step name="Upload Gross Weight To Oracle">
+				<command name="Get Gross Weights To Send" enabled="true" rowset="true" begintran="false" connid="SQL">
+					<!--This Command calls oiBHTScheduleGrossWeightGet which Retrieves Rowset Containing Data Rows to Send To Oracle -->
+					<![CDATA[EXEC dbo.oiBHTScheduleGrossWeightGet]]>
+					<params/>
+					<foreach>
+						<command name="Send Gross Weight To Oracle" enabled="true" rowset="true" begintran="false" connid="ORACLE">
+							<!--This Command calls qdaq$PK_SCHEDULE_IQ_PLC.SetActualGrossWeight to send event to Oracle -->
+							<![CDATA[{call  qdaq$PK_SCHEDULE_IQ_PLC.SetActualGrossWeight (?, ?, ?, ?, ?, ?)}]]>
+							<params>
+								<param  name="Al_Schedule" source="ScheduleID" type="adinteger" direction="adparaminput"/>
+								<param  name="Al_Subset" source="ScheduleSubSetID" type="adinteger" direction="adparaminput"/>
+								<param  name="Al_PicsID" source="PICSID" type="adinteger" direction="adparaminput"/>
+								<param  name="Al_CC" source="CCID" type="adinteger" direction="adparaminput"/>
+								<param  name="Al_Equipment" source="EquipID" type="adinteger" direction="adparaminput"/>
+								<param  name="Al_Weight" source="Weight" type="adsingle" direction="adparaminput"/>
+							</params>
+							<foreach>
+								<command name="Update Event Row In SQL" enabled="true" rowset="false" begintran="false" connid="SQL">
+									<!--This Command calls oiBHTScheduleGrossWeightSent which Updates Row in SQL Server to Mark Success/Failure -->
+									<![CDATA[EXEC dbo.oiBHTScheduleGrossWeightSent ?, ?]]>
+									<params>
+										<param name="OI_EventID" source=".OI_EventID" type="adinteger" direction="adparaminput"/>
+										<param name="OracleReturnCode" source="RETURN_CODE" type="adinteger" direction="adparaminput"/>
+									</params>
+									<foreach/>
+								</command>
+							</foreach>
+						</command>
+					</foreach>
+				</command>
+			</step>
+<!--SEGMENT EVENTS GO HERE -->
+			<step name="Download Production Schedule Queue">
+				<command name="Get Cost Centers and PICSIDs From SQL" rowset="true" connid="SQL" begintran="false" enabled="true">
+					<!--This Command calls oiBHTGetCCDefs which Retrieves Rowset Containing PICSID, CCID, and CCKey Values for Each Cost Center to Be Synchronized -->
+					<![CDATA[EXEC dbo.oiBHTGetCCDefs]]>
+					<params/>
+					<foreach>
+						<command name="Start Cost Center Download" rowset="false" begintran="false" connid="SQL" enabled="true">
+							<!--This Command calls oiBHTSchedCCDownloadStart which Initializes Cost Center for Download -->
+							<![CDATA[EXEC dbo.oiBHTSchedCCDownloadStart ?]]>
+							<params>
+								<param name="CCKey" source="CCKey" type="adchar" direction="adparaminput" size="5"/>
+							</params>
+							<foreach/>
+						</command>
+						<command name="Get Cost Center Schedule From Oracle" rowset="true" connid="ORACLE" begintran="false" enabled="true">
+							<!--This Command calls qdaq$PK_SCHEDULE_IQ_PLC.GetQueue which retrieves data from Oracle -->
+							<![CDATA[{call qdaq$PK_SCHEDULE_IQ_PLC.GetQueue (?, ?)}]]>
+							<params>
+								<param name="al_PicsID" source="PICSID" type="adinteger" direction="adparaminput"/>
+								<param name="al_CC" source="CCID" type="adinteger" direction="adparaminput"/>
+							</params>
+							<foreach>
+								<command name="Load Schedule Entry Into SQL" rowset="false" connid="SQL" begintran="false" enabled="true">
+									<!--This Command calls oiBHTSchedCCDownloadSchedItem which Loads Individual Schedule Entry Into SQL -->
+									<![CDATA[EXEC dbo.oiBHTSchedCCDownloadSchedItem ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?]]>
+									<params>
+										<param name="EquipID" source="EQUIPMENT_ID" type="adinteger" direction="adparaminput"/>
+										<param name="ScheduleID" source="SCHEDULE_SEQ_ID" type="adinteger" direction="adparaminput"/>
+										<param name="ScheduleSubsetID" source="SUBSET_SEQ_ID" type="adinteger" direction="adparaminput"/>
+										<param name="ShopOrderID" source="RECEIVING_SEQ_ID" type="adinteger" direction="adparaminput"/>
+										<param name="ShopOrderSubsetID" source="RECEIVING_LOT_SEQ_ID" type="adinteger" direction="adparaminput"/>
+										<param name="ScheduleDetailSeq" source="DETAIL_SEQ_ID" type="adinteger" direction="adparaminput"/>
+										<param name="ScheduleStart" source="START_TIME" type="addate" direction="adparaminput"/>
+										<param name="ScheduleCmplt" source="STOP_TIME" type="addate" direction="adparaminput"/>
+										<param name="LastChangeDate" source="LAST_CHANGE_DATE" type="addate" direction="adparaminput"/>
+										<param name="CustomerName" source="COMPANY_NAME" type="advarchar" direction="adparaminput" size="50"/>
+										<param name="PartID" source="PART_NUMBER" type="advarchar" direction="adparaminput" size="50"/>
+										<param name="PartName" source="PART_NAME" type="advarchar" direction="adparaminput" size="50"/>
+										<param name="NetWeight" source="NET_WEIGHT" type="adsingle" direction="adparaminput"/>
+									</params>
+									<foreach/>
+								</command>
+							</foreach>
+						</command>
+						<command name="Process Cost Center Schedule Changes" rowset="true" begintran="false" connid="SQL" enabled="true">
+							<!--This Command calls oiBHTSchedCCDownloadProcess which identifies new and changed schedule entries and returns rowset for further processing -->
+							<![CDATA[EXEC dbo.oiBHTSchedCCDownloadProcess ?]]>
+							<params>
+								<param name="CCKey" source="CCKey" type="adchar" direction="adparaminput" size="5"/>
+							</params>
+							<foreach>
+								<command name="Get Sequence Step Detail From Oracle" rowset="true" connid="ORACLE" begintran="false" enabled="true">
+									<!--This Command calls qdaq$PK_SCHEDULE_IQ_PLC.GetScheduleStepDetail which retrieves data from Oracle -->
+									<![CDATA[{call qdaq$PK_SCHEDULE_IQ_PLC.GetScheduleStepDetail (?, ?, ?)}]]>
+									<params>
+										<param name="al_PicsID" source="PICSID" type="adinteger" direction="adparaminput"/>
+										<param name="Al_Schedule" source="ScheduleID" type="adinteger" direction="adparaminput"/>
+										<param name="Al_Subset" source="ScheduleSubsetID" type="adinteger" direction="adparaminput"/>
+									</params>
+									<foreach>
+										<command name="Load Sequence Detail Entry Into SQL" rowset="false" connid="SQL" begintran="false" enabled="true">
+											<!--This Command calls oiBHTSchedDownloadSchedSeqDetail which Loads Individual Sequence Detail Steps Into SQL -->
+											<![CDATA[EXEC dbo.oiBHTSchedDownloadSchedSeqDetail ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?]]>
+											<params>
+												<param name="ScheduleID" source="@Al_Schedule" type="adinteger" direction="adparaminput"/>
+												<param name="ScheduleSubsetID" source="@Al_Subset" type="adinteger" direction="adparaminput"/>
+												<param name="ScheduleDetailSeq" source="DETAIL_SEQ_ID" type="adinteger" direction="adparaminput"/>
+												<param name="ScheduleDetailStepNum" source="STEP_ORDER" type="adinteger" direction="adparaminput"/>
+												<param name="ScheduleDetailStepName" source="STEP_NAME" type="advarchar" direction="adparaminput" size="40"/>
+												<param name="ScheduleDetailEstTime" source="STEP_ESTIMATED_TIME" type="adinteger" direction="adparaminput"/>
+												<param name="ScheduleDetailEquipTypeID" source="EQUIPMENT_TYPE" type="adinteger" direction="adparaminput"/>
+												<param name="ScheduleDetailRecipeType" source="RECIPE_TYPE" type="adinteger" direction="adparaminput"/>
+												<param name="ScheduleDetailRecipeTime" source="RECIPE_TIME" type="adinteger" direction="adparaminput"/>
+												<param name="ScheduleDetailRecipeTemp" source="RECIPE_TEMP" type="adinteger" direction="adparaminput"/> 
+												<param name="TemperMaxElapsedTime" source="MAX_ELAPSED_TIME" type="adinteger" direction="adparaminput"/>
+											</params>
+											<foreach/>
+										</command>
+									</foreach>
+								</command>
+								<command name="Get Schedule Train Detail From Oracle" rowset="true" connid="ORACLE" begintran="false" enabled="true">
+									<!--This Command calls qdaq$PK_SCHEDULE_IQ_PLC.GetTrain which retrieves data from Oracle -->
+									<![CDATA[{call qdaq$PK_SCHEDULE_IQ_PLC.GetTrain (?, ?, ?)}]]>
+									<params>
+										<param name="al_PicsID" source="PICSID" type="adinteger" direction="adparaminput"/>
+										<param name="Al_Schedule" source="ScheduleID" type="adinteger" direction="adparaminput"/>
+										<param name="Al_Subset" source="ScheduleSubsetID" type="adinteger" direction="adparaminput"/>
+									</params>
+									<foreach>
+										<command name="Load Schedule Train Detail Entry Into SQL" rowset="false" connid="SQL" begintran="false" enabled="true">
+											<!--This Command calls oiBHTSchedDownloadSchedTrainDetail which Loads Individual Sequence Detail Steps Into SQL -->
+											<![CDATA[EXEC dbo.oiBHTSchedDownloadSchedTrainDetail ?, ?, ?, ?, ?, ?]]>
+											<params>
+												<param name="ScheduleID" source="@Al_Schedule" type="adinteger" direction="adparaminput"/>
+												<param name="ScheduleSubsetID" source="@Al_Subset" type="adinteger" direction="adparaminput"/>
+												<param name="ScheduleDetailSeq" source="DETAIL_SEQ" type="adinteger" direction="adparaminput"/>
+												<param name="ScheduleDetailStepNum" source="STEP_ORDER" type="adinteger" direction="adparaminput"/>
+												<param name="CCID" source="COST_CENTER_ID" type="adinteger" direction="adparaminput"/>
+												<param name="EquipID" source="EQUIPMENT_ID" type="adinteger" direction="adparaminput"/>
+											</params>
+											<foreach/>
+										</command>
+									</foreach>
+								</command>
+								<command name="Get Furnace Recipe From Oracle" rowset="true" connid="ORACLE" begintran="false" enabled="true">
+									<!--This Command calls qdaq$PK_SCHEDULE_IQ_PLC.GetRecipe which retrieves data from Oracle -->
+									<![CDATA[{call qdaq$PK_SCHEDULE_IQ_PLC.GetRecipe (?, ?, ?, ?, ?)}]]>
+									<params>
+										<param name="al_PicsID" source="PICSID" type="adinteger" direction="adparaminput"/>
+										<param name="Al_Cost_center_id" source="CCID" type="adinteger" direction="adparaminput"/>
+										<param name="Al_Equipment_ID" source="EquipID" type="adinteger" direction="adparaminput"/>
+										<param name="Al_Schedule" source="ScheduleID" type="adinteger" direction="adparaminput"/>
+										<param name="Al_Subset" source="ScheduleSubsetID" type="adinteger" direction="adparaminput"/>
+									</params>
+									<foreach>
+										<command name="Load Furnace Recipe Segment Entry Into SQL" rowset="false" connid="SQL" begintran="false" enabled="true">
+											<!--This Command calls oiBHTSchedDownloadFurnaceRecipe which Loads Individual Recipe Segments Into SQL -->
+											<![CDATA[EXEC dbo.oiBHTSchedDownloadFurnaceRecipe ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?]]>
+											<params>
+												<param name="ScheduleID" source="@Al_Schedule" type="adinteger" direction="adparaminput"/>
+												<param name="ScheduleSubsetID" source="@Al_Subset" type="adinteger" direction="adparaminput"/>
+												<param name="SEG_ID" source="SEG_ID" type="adinteger" direction="adparaminput"/>
+												<param name="SEG_TYPE" source="SEG_TYPE" type="adinteger" direction="adparaminput"/>
+												<param name="SEG_TIME" source="SEG_TIME" type="adinteger" direction="adparaminput"/>
+												<param name="SEG_TMP_SP" source="SEG_TMP_SP" type="adinteger" direction="adparaminput"/>
+												<param name="SEG_CRBN_SP" source="SEG_CRBN_SP" type="adsingle" direction="adparaminput"/>
+												<param name="SEG_ENDO_SP" source="SEG_ENDO_SP" type="adinteger" direction="adparaminput"/>
+												<param name="SEG_TMP_GUAR" source="SEG_TMP_GUAR" type="adinteger" direction="adparaminput"/>
+												<param name="SEG_CRBN_GUAR" source="SEG_CRBN_GUAR" type="adinteger" direction="adparaminput"/>
+												<param name="SEG_VESTB_PURGE" source="SEG_VESTB_PURGE" type="adinteger" direction="adparaminput"/>
+												<param name="SEG_CN_RECIPE" source="SEG_CN_RECIPE" type="adinteger" direction="adparaminput"/>
+												<param name="SEG_FNC_RECIPE" source="SEG_FNC_RECIPE" type="adinteger" direction="adparaminput"/>
+												<param name="SEG_LOAD_IN_FRN" source="SEG_LOAD_IN_FRN" type="adinteger" direction="adparaminput"/>
+												<param name="QNCH_TYPE" source="QNCH_TYPE" type="adinteger" direction="adparaminput"/>
+												<param name="QNCH_TIME" source="QNCH_TIME" type="adinteger" direction="adparaminput"/>
+												<param name="QNCH_TMP" source="QNCH_TMP" type="adinteger" direction="adparaminput"/>
+												<param name="QNCH_AGIT" source="QNCH_AGIT" type="adinteger" direction="adparaminput"/>
+												<param name="QNCH_DRAIN" source="QNCH_DRAIN" type="adinteger" direction="adparaminput"/>
+											</params>
+											<foreach/>
+										</command>
+									</foreach>
+								</command>
+								<command name="Build Schedule Entry Data" enabled="true" rowset="false" begintran="false" connid="SQL">
+									<!--This Command calls oiBHTSchedBuildScheduleID which processes schedule entries from Oracle interface tables into native SQL tables -->
+									<![CDATA[EXEC dbo.oiBHTSchedBuildScheduleID ?, ?]]>
+									<params>
+										<param name="ScheduleID" source="ScheduleID" type="adinteger" direction="adparaminput"/>
+										<param name="ScheduleSubsetID" source="ScheduleSubsetID" type="adinteger" direction="adparaminput"/>
+									</params>
+									<foreach/>
+								</command>
+							</foreach>
+						</command>
+						<command name="Complete Cost Center Download" rowset="false" begintran="false" connid="SQL" enabled="true">
+							<!--This Command calls oiBHTSchedCCDownloadStart which Initializes Cost Center for Download -->
+							<![CDATA[EXEC dbo.oiBHTSchedCCDownloadEnd ?]]>
+							<params>
+								<param name="CCKey" source="CCKey" type="adchar" direction="adparaminput" size="5"/>
+							</params>
+							<foreach/>
+						</command>
+					</foreach>
+				</command>
+			</step>
+		</job>
+	</jobs>
+</root>

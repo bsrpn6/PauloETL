@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+			<step name="Upload Segment Events To Oracle">
+				<command name="Get Segment Events To Send" enabled="true" rowset="true" begintran="false" connid="SQL">
+					<!--This Command calls oiBHTSegmentEventsGet which Retrieves Rowset Containing Data Rows to Send To Oracle -->
+					<![CDATA[EXEC dbo.oiBHTSegmentEventsGet]]>
+					<params/>
+					<foreach>
+						<command name="Send Segment Event To Oracle" enabled="true" rowset="true" begintran="false" connid="ORACLE">
+							<!--This Command calls qdaq$PK_SCHEDULE_IQ_PLC.SendHHEvent which retrieves data from Oracle -->
+							<![CDATA[{call  qdaq$PK_SCHEDULE_IQ_PLC.SendHHEvent (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)}]]>
+							<params>
+								<param  name="A1_Schedule" source="ScheduleID" type="adinteger" direction="adparaminput"/>
+								<param  name="A1_Subset" source="ScheduleSubSetID" type="adinteger" direction="adparaminput"/>
+								<param  name="A1_PicsID" source="PICSID" type="adinteger" direction="adparaminput"/>
+								<param  name="A1_CC" source="CCID" type="adinteger" direction="adparaminput"/>
+								<param  name="A1_Equiment" source="EquipID" type="adinteger" direction="adparaminput"/>
+								<param  name="As_Activity" source="ActivityZone" type="adinteger" direction="adparaminput"/>
+								<param  name="As_Time" source="EventTimeStamp" type="addate" direction="adparaminput"/>
+								<param  name="As_Error" source="EventTimeStamp" type="advarchar" direction="adparaminputoutput" size="255"/>
+							</params>
+							<foreach>
+								<command name="Update Event Row In SQL" enabled="true" rowset="false" begintran="false" connid="SQL">
+									<!--This Command calls oiBHTSegmentEventSent which Updates Row in SQL Server to Mark Success/Failure -->
+									<![CDATA[EXEC dbo.oiBHTSegmentEventSent ?, ?]]>
+									<params>
+										<param name="OI_EventID" source=".OI_EventID" type="adinteger" direction="adparaminput"/>
+										<param name="OracleReturnCode" source="RETURN_CODE" type="adinteger" direction="adparaminput"/>
+									</params>
+									<foreach/>
+								</command>
+							</foreach>
+						</command>
+					</foreach>
+				</command>
+			</step>

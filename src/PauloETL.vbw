@@ -1,0 +1,8 @@
+ETLControl = 172, 88, 1536, 736, 
+ETLConnections = 101, 200, 1465, 848, C
+ETLConnection = 34, 106, 1398, 754, C
+Globals = 70, 259, 1434, 907, C
+ETLCommands = 140, 200, 1504, 848, C
+ETLCommand = -4, 35, 1360, 683, 
+frmETLCommand = 88, 116, 1563, 658, C, 147, 129, 1555, 671, C
+frmSingleStep = 176, 232, 1584, 774, C, 154, 203, 1562, 745, C

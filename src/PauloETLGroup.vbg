@@ -1,0 +1,4 @@
+VBGROUP 5.0
+Project=PauloETL.vbp
+StartupProject=PauloETLGUI.vbp
+Project=PauloETLExecute.vbp
