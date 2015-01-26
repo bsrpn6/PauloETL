@@ -148,15 +148,6 @@ Partial Friend Class frmETLMain
             End While
 
 
-
-            'For i = 0 To moETLControl.ETLConnections.Count
-            '    Dim oETLConnection As PauloETL.ETLConnection
-            '    oETLConnection = moETLControl.ETLConnections.Item(0)
-            '    oItem = lvwConnections.Items.Insert(lRow - 1, oETLConnection.ID, oETLConnection.ID, "")
-            '    ListViewHelper.GetListViewSubItem(oItem, 1).Text = oETLConnection.Name
-            '    lRow += 1
-            'Next
-
             cmdLoadXML.Enabled = False
             cmdTestConnection.Enabled = True
             cmdViewJob.Enabled = True
@@ -206,4 +197,21 @@ Partial Friend Class frmETLMain
 	Private Sub frmETLMain_Closed(ByVal eventSender As Object, ByVal eventArgs As EventArgs) Handles MyBase.Closed
 		moETLControl = Nothing
 	End Sub
+
+    Private Sub btnSelectFile_Click(sender As Object, e As EventArgs) Handles btnSelectFile.Click
+        Dim fd As OpenFileDialog = New OpenFileDialog()
+        Dim strFileName As String
+
+        fd.Title = "Open File Dialog"
+        fd.InitialDirectory = "C:\"
+        fd.Filter = "XML files (*.xml)|*.xml|All files (*.*)|*.*"
+        fd.FilterIndex = 1
+        fd.RestoreDirectory = True
+
+        If fd.ShowDialog() = DialogResult.OK Then
+            strFileName = fd.FileName
+            txtXMLFile.Text = strFileName
+        End If
+
+    End Sub
 End Class

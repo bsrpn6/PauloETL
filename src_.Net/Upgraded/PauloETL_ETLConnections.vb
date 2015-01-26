@@ -63,41 +63,41 @@ Public Class ETLConnections
                 End While
 
 
-				lReturn = lNodeCount
+                lReturn = lNodeCount
 
-			End If
+            End If
 
-		Catch excep As System.Exception
+        Catch excep As System.Exception
 
-			ErrorMessage = MainErrHandler(Information.Err().Number, excep.Message, cModule & cProcedure)
+            ErrorMessage = MainErrHandler(Information.Err().Number, excep.Message, cModule & cProcedure)
 
-		Finally 
-			MainDebug("Function Exit: " & lReturn, cModule & cProcedure)
-		End Try
-		Return lReturn
+        Finally
+            MainDebug("Function Exit: " & lReturn, cModule & cProcedure)
+        End Try
+        Return lReturn
 
-	End Function
+    End Function
 
-	Default Public ReadOnly Property Item(ByVal vntIndexKey As Object) As ETLConnection
-		Get
-			'used when referencing an element in the collection
-			'vntIndexKey contains either the Index or Key to the collection,
-			'this is why it is declared as a Variant
-			'Syntax: Set foo = x.Item(xyz) or Set foo = x.Item(5)
-			Return mCol(vntIndexKey)
-		End Get
-	End Property
+    Default Public ReadOnly Property Item(ByVal vntIndexKey As Object) As ETLConnection
+        Get
+            'used when referencing an element in the collection
+            'vntIndexKey contains either the Index or Key to the collection,
+            'this is why it is declared as a Variant
+            'Syntax: Set foo = x.Item(xyz) or Set foo = x.Item(5)
+            Return mCol(vntIndexKey)
+        End Get
+    End Property
 
-	Public ReadOnly Property Count() As Integer
-		Get
-			'used when retrieving the number of elements in the
-			'collection. Syntax: Debug.Print x.Count
-			Return mCol.Count
-		End Get
-	End Property
+    Public ReadOnly Property Count() As Integer
+        Get
+            'used when retrieving the number of elements in the
+            'collection. Syntax: Debug.Print x.Count
+            Return mCol.Count
+        End Get
+    End Property
 
 
-	'UPGRADE_ISSUE: (2068) IUnknown object was not upgraded. More Information: http://www.vbtonet.com/ewis/ewi2068.aspx
+    'UPGRADE_ISSUE: (2068) IUnknown object was not upgraded. More Information: http://www.vbtonet.com/ewis/ewi2068.aspx
 
     Public Function GetEnumerator() As IEnumerator Implements System.Collections.IEnumerable.GetEnumerator
         'this property allows you to enumerate
