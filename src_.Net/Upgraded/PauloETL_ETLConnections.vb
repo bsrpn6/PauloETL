@@ -48,7 +48,7 @@ Public Class ETLConnections
                 '            Next I
 
                 'ADAM CODE
-                Dim oNodeEnumerator 'As System.Xml.XmlNodeListEnumerator
+                Dim oNodeEnumerator As Object 'As System.Xml.XmlNodeListEnumerator
                 oNodeEnumerator = oNodeList.GetEnumerator()
 
                 While oNodeEnumerator.MoveNext()

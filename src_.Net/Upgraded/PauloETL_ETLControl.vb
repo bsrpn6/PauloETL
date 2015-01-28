@@ -78,7 +78,7 @@ Public Class ETLControl
 		Try
             'cProcedure = "LoadJobStepsFromXML()"
 			Dim oJobNode As XmlNode
-			lReturn = "lNodeCount"
+            'lReturn = "lNodeCount"
 
 			lReturn = 0
 			'Locate Job Node
@@ -117,7 +117,7 @@ Public Class ETLControl
 			Dim oETLCommandNode As XmlElement
 			Dim sStepName, sLocation As String
 
-			lReturn = 0
+            'lReturn = 0
 			'Locate Job Node
 			sStepName = ReflectionHelper.GetPrimitiveValue(Of String)(StepNode.GetAttribute("name"))
 			sLocation = "Job:  " & JobID & Environment.NewLine & "Step: " & sStepName

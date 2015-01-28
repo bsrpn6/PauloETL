@@ -3,8 +3,8 @@
 <!--  Rev 1 10/14/2010 Marc Bertrand - Modified to Access New Field For Temper Delay Setting-->
 <root xsi:noNamespaceSchemaLocation="ETLSchema.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
 	<connections>
-		<connection id="SQL" connstring="Provider='sqloledb';Data Source='STLSRVR03.PAULO.COM';Initial Catalog='PauloWIP'" name="Paulo Site WIP Database" uid="process" pwd="process"/>
-		<connection id="ORACLE" connstring="Provider=OraOLEDB.Oracle;Data Source=STLDAQ.PAULO.COM;DistribTX=0;PLSQLRSet=1;" name="Paulo Oracle PICS Database" uid="process_access" pwd="givemedata"/>
+		<connection id="SQL" connstring="Provider='sqloledb';Data Source=STLFTTMA;Initial Catalog=PauloWIP;Persist Security Info=True;User ID=process;Password='process'" name="Paulo Site WIP Database" uid="process" pwd="process"/>
+		<connection id="ORACLE" connstring="Provider=OraOLEDB.Oracle;Data Source=STLDAQCR;Persist Security Info=True;User ID=process_access;Password=givemedata;Unicode=True" name="Paulo Oracle PICS Database" uid="process_access" pwd="givemedata"/>
 	</connections>
 	<jobs>
 		<job id="Main" name="Upload Events and Download Schedule/Shop Order Information From Oracle">

@@ -54,11 +54,11 @@ Partial Friend Class frmETLMain
 	Private Function LoadJobsFromXML() As Integer
 		Dim lReturn, lNodeCount As Integer
 		Try
-			Const cProcedure As String = "LoadJobsFromXML()"
+            'Const cProcedure As String = "LoadJobsFromXML()"
 			Dim XMLDoc As XmlDocument
 			Dim oNodeList As XmlNodeList
 			Dim oNode As XmlElement
-			Dim oETLConnection As PauloETL.ETLConnection
+            'Dim oETLConnection As PauloETL.ETLConnection
             'lReturn = "lNodeCount"
 			Dim oItem As ListViewItem
 			Dim sValue As String = ""
@@ -76,7 +76,8 @@ Partial Friend Class frmETLMain
 				'Loop Through Connections
 				For I As Integer = 1 To lNodeCount
 					'UPGRADE_WARNING: (2065) MSXML2.IXMLDOMNodeList method oNodeList.nextNode has a new behavior. More Information: http://www.vbtonet.com/ewis/ewi2065.aspx
-					oNode = oNodeList.GetEnumerator().Current
+                    oNode = oNodeList.Item(I - 1)
+
 					sValue = ReflectionHelper.GetPrimitiveValue(Of String)(oNode.GetAttribute("id"))
 					oItem = lvwJobs.Items.Insert(I - 1, sValue, sValue, "")
 					sValue = ReflectionHelper.GetPrimitiveValue(Of String)(oNode.GetAttribute("name"))
@@ -126,7 +127,7 @@ Partial Friend Class frmETLMain
 		lvwConnections.Columns.Insert(1, "Connection Name", CInt(lvwConnections.Width * 0.75))
         If moETLControl.LoadXMLConfig(txtXMLFile.Text, sError) > 0 Then
 
-            Dim i = 0
+            Dim i As Integer = 0
 
             'For Each oETLConnection As PauloETL.ETLConnection In moETLControl.ETLConnections
             '    oItem = lvwConnections.Items.Insert(lRow - 1, oETLConnection.ID, oETLConnection.ID, "")
@@ -183,7 +184,8 @@ Partial Friend Class frmETLMain
 		If lvwJobs.FocusedItem.Index + 1 < 1 Then
 			MessageBox.Show("Must Select job", Me.Text, MessageBoxButtons.OK, MessageBoxIcon.Exclamation)
 		Else
-			frmJobView.DefInstance.Show()
+            frmJobView.Show()
+            'DefInstance.Show()
 		End If
 
 	End Sub
