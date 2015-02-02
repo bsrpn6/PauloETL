@@ -164,7 +164,7 @@ Partial Class frmETLMain
         Me.txtXMLFile.RightToLeft = System.Windows.Forms.RightToLeft.No
         Me.txtXMLFile.Size = New System.Drawing.Size(649, 25)
         Me.txtXMLFile.TabIndex = 1
-        Me.txtXMLFile.Text = "C:\Users\stlprof\Desktop\PauloETLRev7\PauloETL.xml"
+        Me.txtXMLFile.Text = "C:\Users\stlprof\Source\Repos\PauloETL\PauloETL.xml"
         '
         'lvwJobs
         '
