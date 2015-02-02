@@ -6,7 +6,7 @@ Imports System.Data
 Imports System.Data.Common
 Imports System.Xml
 Imports UpgradeHelpers.Helpers
-'UPGRADE_NOTE: (1043) Class instancing was changed to public. More Information: http://www.vbtonet.com/ewis/ewi1043.aspx
+
 Public Class ETLConnection
 	'Constant for Module Name Used In Error Functions
 	Const cModule As String = "ETLControl."
@@ -21,7 +21,6 @@ Public Class ETLConnection
 		Const cProcedure As String = "LoadFromXML()"
 		Dim bReturn As Boolean = False
 		Try
-            'cProcedure = "LoadFromXML()"
 
 			bReturn = False
 			msID = ReflectionHelper.GetPrimitiveValue(Of String)(oNode.GetAttribute("id"))
@@ -47,12 +46,10 @@ Public Class ETLConnection
 		Const cProcedure As String = "OpenConnection()"
 		Dim bReturn As Boolean = False
 		Try
-            'cProcedure = "OpenConnection()"
 
 			bReturn = False
-			'UPGRADE_TODO: (7010) The connection string must be verified to fullfill the .NET data provider connection string requirements. More Information: http://www.vbtonet.com/ewis/ewi7010.aspx
-			moCn.ConnectionString = ""
-			moCn.Open()
+            'UNCOMMENT - CONNECTION
+            moCn.Open()
 			bReturn = True
 
 		Catch excep As System.Exception

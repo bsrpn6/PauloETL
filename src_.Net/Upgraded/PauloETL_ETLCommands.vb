@@ -6,7 +6,7 @@ Imports System.Collections
 Imports System.Collections.Specialized
 Imports System.Reflection
 Imports System.Xml
-'UPGRADE_NOTE: (1043) Class instancing was changed to public. More Information: http://www.vbtonet.com/ewis/ewi1043.aspx
+
 <DefaultMember("Item")> _
 Public Class ETLCommands
 	Implements IEnumerable
@@ -21,11 +21,10 @@ Public Class ETLCommands
 		Const cProcedure As String = "LoadFromXML()"
 		Dim lReturn, lNodeCount As Integer
 		Try
-            'cProcedure = "LoadFromXML()"
+
 			Dim oNodeList As XmlNodeList
 			Dim oNode As XmlElement
 			Dim oETLCommand As ETLCommand
-			lReturn = "lNodeCount"
 
 			lReturn = -1
 			'Load NodeList of Connections
@@ -36,8 +35,8 @@ Public Class ETLCommands
 			Else
 				'Loop Through Connections
 				For I As Integer = 1 To lNodeCount
-					'UPGRADE_WARNING: (2065) MSXML2.IXMLDOMNodeList method oNodeList.nextNode has a new behavior. More Information: http://www.vbtonet.com/ewis/ewi2065.aspx
-					oNode = oNodeList.GetEnumerator().Current
+
+                    oNode = oNodeList.Item(I - 1)
 					oETLCommand = New ETLCommand()
 					If oETLCommand.LoadFromXML(oNode, oETLControl, ParentLocation, ErrorMessage, ParentCommand) Then
 						mCol.Add(Guid.NewGuid().ToString(), oETLCommand)
@@ -83,9 +82,11 @@ Public Class ETLCommands
 
 	Public Function GetEnumerator() As IEnumerator Implements System.Collections.IEnumerable.GetEnumerator
 		'this property allows you to enumerate
-		'this collection with the For...Each syntax
-		Return mCol.GetEnumerator()
-	End Function
+        'this collection with the For...Each syntax
+
+        Return mCol.GetEnumerator()
+
+    End Function
 
 	Friend Sub New()
 		MyBase.New()

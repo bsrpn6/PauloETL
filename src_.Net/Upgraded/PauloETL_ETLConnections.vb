@@ -9,7 +9,7 @@ Imports System.Xml
 'UPGRADE_NOTE: (1043) Class instancing was changed to public. More Information: http://www.vbtonet.com/ewis/ewi1043.aspx
 <DefaultMember("Item")> _
 Public Class ETLConnections
-	Implements IEnumerable
+    Implements IEnumerable
 	'Constant for Module Name Used In Error Functions
 	Const cModule As String = "ETLConnections."
 
@@ -21,11 +21,9 @@ Public Class ETLConnections
 		Const cProcedure As String = "LoadFromXML()"
 		Dim lReturn, lNodeCount As Integer
 		Try
-            'cProcedure = "LoadFromXML()"
 			Dim oNodeList As XmlNodeList
 			Dim oNode As XmlElement
 			Dim oETLConnection As ETLConnection
-            'lReturn = "lNodeCount"
 
 			lReturn = 0
 			'Load NodeList of Connections

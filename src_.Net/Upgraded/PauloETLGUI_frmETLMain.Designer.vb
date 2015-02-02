@@ -120,14 +120,17 @@ Partial Class frmETLMain
         'lvwConnections
         '
         Me.lvwConnections.BackColor = System.Drawing.SystemColors.Window
+        Me.listViewHelper1.SetColumnHeaderIcons(Me.lvwConnections, "")
         Me.listViewHelper1.SetCorrectEventsBehavior(Me.lvwConnections, False)
         Me.lvwConnections.ForeColor = System.Drawing.SystemColors.WindowText
         Me.lvwConnections.FullRowSelect = True
         Me.lvwConnections.HideSelection = False
         Me.listViewHelper1.SetItemClickMethod(Me.lvwConnections, "")
+        Me.listViewHelper1.SetLargeIcons(Me.lvwConnections, "")
         Me.lvwConnections.Location = New System.Drawing.Point(8, 96)
         Me.lvwConnections.Name = "lvwConnections"
         Me.lvwConnections.Size = New System.Drawing.Size(857, 217)
+        Me.listViewHelper1.SetSmallIcons(Me.lvwConnections, "")
         Me.listViewHelper1.SetSorted(Me.lvwConnections, False)
         Me.listViewHelper1.SetSortKey(Me.lvwConnections, 0)
         Me.listViewHelper1.SetSortOrder(Me.lvwConnections, System.Windows.Forms.SortOrder.Ascending)
@@ -161,19 +164,22 @@ Partial Class frmETLMain
         Me.txtXMLFile.RightToLeft = System.Windows.Forms.RightToLeft.No
         Me.txtXMLFile.Size = New System.Drawing.Size(649, 25)
         Me.txtXMLFile.TabIndex = 1
-        Me.txtXMLFile.Text = "C:\Users\Brandon\Desktop\PauloETLRev3\PauloETL.xml"
+        Me.txtXMLFile.Text = "C:\Users\stlprof\Desktop\PauloETLRev7\PauloETL.xml"
         '
         'lvwJobs
         '
         Me.lvwJobs.BackColor = System.Drawing.SystemColors.Window
+        Me.listViewHelper1.SetColumnHeaderIcons(Me.lvwJobs, "")
         Me.listViewHelper1.SetCorrectEventsBehavior(Me.lvwJobs, False)
         Me.lvwJobs.ForeColor = System.Drawing.SystemColors.WindowText
         Me.lvwJobs.FullRowSelect = True
         Me.lvwJobs.HideSelection = False
         Me.listViewHelper1.SetItemClickMethod(Me.lvwJobs, "")
+        Me.listViewHelper1.SetLargeIcons(Me.lvwJobs, "")
         Me.lvwJobs.Location = New System.Drawing.Point(8, 336)
         Me.lvwJobs.Name = "lvwJobs"
         Me.lvwJobs.Size = New System.Drawing.Size(857, 233)
+        Me.listViewHelper1.SetSmallIcons(Me.lvwJobs, "")
         Me.listViewHelper1.SetSorted(Me.lvwJobs, False)
         Me.listViewHelper1.SetSortKey(Me.lvwJobs, 0)
         Me.listViewHelper1.SetSortOrder(Me.lvwJobs, System.Windows.Forms.SortOrder.Ascending)

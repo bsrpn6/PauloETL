@@ -22,10 +22,10 @@ Public Class ETLControl
 		Const cProcedure As String = "LoadXMLConfig()"
 		Dim lReturn As Integer = 0
 		Try
-            'cProcedure = "LoadXMLConfig()"
 
 			lReturn = 0
-			mbXMLDocLoaded = False
+            mbXMLDocLoaded = False
+            'REMOVE - UNSUPPORTED
 			'UPGRADE_ISSUE: (2064) MSXML2.DOMDocument60 property moXMLDoc.validateOnParse was not upgraded. More Information: http://www.vbtonet.com/ewis/ewi2064.aspx
             'moXMLDoc.validateOnParse = False
 			'UPGRADE_ISSUE: (2064) MSXML2.DOMDocument60 property moXMLDoc.async was not upgraded. More Information: http://www.vbtonet.com/ewis/ewi2064.aspx
@@ -41,12 +41,13 @@ Public Class ETLControl
 			End Try
 			If Not temp_xml_result Then
 				ErrorMessage = MainErrHandler(0, "Error Loading XML File", cModule & cProcedure)
-			Else
-				'Validate XML Against Schema
-				'UPGRADE_ISSUE: (2064) MSXML2.DOMDocument60 method moXMLDoc.Validate was not upgraded. More Information: http://www.vbtonet.com/ewis/ewi2064.aspx
+            Else
+                'REMOVE - UNSUPPORTED
+                'Validate XML Against Schema
+                'UPGRADE_ISSUE: (2064) MSXML2.DOMDocument60 method moXMLDoc.Validate was not upgraded. More Information: http://www.vbtonet.com/ewis/ewi2064.aspx
                 'moXMLDoc.Validate()
-				'UPGRADE_ISSUE: (2064) MSXML2.DOMDocument60 property moXMLDoc.parseError was not upgraded. More Information: http://www.vbtonet.com/ewis/ewi2064.aspx
-				'UPGRADE_ISSUE: (2064) MSXML2.IXMLDOMParseError property moXMLDoc.parseError.ErrorCode was not upgraded. More Information: http://www.vbtonet.com/ewis/ewi2064.aspx
+                'UPGRADE_ISSUE: (2064) MSXML2.DOMDocument60 property moXMLDoc.parseError was not upgraded. More Information: http://www.vbtonet.com/ewis/ewi2064.aspx
+                'UPGRADE_ISSUE: (2064) MSXML2.IXMLDOMParseError property moXMLDoc.parseError.ErrorCode was not upgraded. More Information: http://www.vbtonet.com/ewis/ewi2064.aspx
                 'If moXMLDoc.parseError.errorCode <> 0 Then
                 'UPGRADE_ISSUE: (2064) MSXML2.DOMDocument60 property moXMLDoc.parseError was not upgraded. More Information: http://www.vbtonet.com/ewis/ewi2064.aspx
                 'UPGRADE_ISSUE: (2064) MSXML2.IXMLDOMParseError property moXMLDoc.parseError.srcText was not upgraded. More Information: http://www.vbtonet.com/ewis/ewi2064.aspx
@@ -76,9 +77,7 @@ Public Class ETLControl
 		Const cProcedure As String = "LoadJobStepsFromXML()"
 		Dim lReturn, lNodeCount As Integer
 		Try
-            'cProcedure = "LoadJobStepsFromXML()"
 			Dim oJobNode As XmlNode
-            'lReturn = "lNodeCount"
 
 			lReturn = 0
 			'Locate Job Node
@@ -112,12 +111,11 @@ Public Class ETLControl
 		Const cProcedure As String = "ExecuteJobStep()"
 		Dim lReturn As Integer = 0
 		Try
-            'cProcedure = "ExecuteJobStep()"
+
 			Dim oETLCommand As ETLCommand
 			Dim oETLCommandNode As XmlElement
 			Dim sStepName, sLocation As String
 
-            'lReturn = 0
 			'Locate Job Node
 			sStepName = ReflectionHelper.GetPrimitiveValue(Of String)(StepNode.GetAttribute("name"))
 			sLocation = "Job:  " & JobID & Environment.NewLine & "Step: " & sStepName
@@ -179,24 +177,7 @@ LocalErrHandler:
 		ErrorMessage = MainErrHandler(Information.Err().Number, Information.Err().Description, cModule & cProcedure)
 		Resume LocalExit
 
-	End Function
-
-	'Friend Property Let Location(ByVal New_Location As String)
-	'  msLocation = New_Location
-	'End Property
-	'
-	'Public Property Get Location() As String
-	'  Location = msLocation
-	'End Property
-	'
-	'Friend Property Set ActiveCommand(New_ActiveCommand As ETLCommand)
-	' Set moActiveCommand = New_ActiveCommand
-	'End Property
-	'
-	'Public Property Get ActiveCommand() As ETLCommand
-	'  Set ActiveCommand = moActiveCommand
-	'End Property
-
+    End Function
 
 	Public ReadOnly Property XMLDoc() As XmlDocument
 		Get

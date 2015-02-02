@@ -12,6 +12,8 @@ Module Globals
 
 	Sub MainDebug(ByVal DebugMessage As String, Optional ByVal DebugSource As String = "")
 
+        Debug.WriteLine(DebugSource & ": " & DebugMessage)
+
 		If gbLogDebug Then
 			Debug.WriteLine(DebugSource & ": " & DebugMessage)
 		End If
@@ -44,10 +46,8 @@ Module Globals
 			Case "adparamoutput"
 				vReturn = ParameterDirection.Output
 			Case "adparamreturnvalue"
-				vReturn = ParameterDirection.ReturnValue
-                'Case Else
-                'UPGRADE_ISSUE: (2070) Constant adParamUnknown was not upgraded. More Information: http://www.vbtonet.com/ewis/ewi2070.aspx
-                'vReturn = adParamUnknown
+                vReturn = ParameterDirection.ReturnValue
+
         End Select
 		Return vReturn
 
@@ -70,9 +70,7 @@ Module Globals
 				vReturn = DbType.Single
 			Case "addouble"
 				vReturn = DbType.Double
-                'Case Else
-                'UPGRADE_ISSUE: (2070) Constant adEmpty was not upgraded. More Information: http://www.vbtonet.com/ewis/ewi2070.aspx
-                'vReturn = adEmpty
+
         End Select
 		Return vReturn
 
