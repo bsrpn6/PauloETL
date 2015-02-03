@@ -4,7 +4,7 @@
 <root xsi:noNamespaceSchemaLocation="ETLSchema.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
 	<connections>
 		<connection id="SQL" connstring="Provider='sqloledb';Data Source=STLFTTMA;Initial Catalog=PauloWIP;Persist Security Info=True;User ID=process;Password='process'" name="Paulo Site WIP Database" uid="process" pwd="process"/>
-		<connection id="ORACLE" connstring="Provider=OraOLEDB.Oracle;Data Source=STLDAQCR;Persist Security Info=True;User ID=process_access;Password=givemedata;Unicode=True" name="Paulo Oracle PICS Database" uid="process_access" pwd="givemedata"/>
+		<connection id="ORACLE" connstring="Provider=OraOLEDB.Oracle;Data Source=STLDAQCR;Persist Security Info=True;User ID=equipdaq;Password=qdaq;Unicode=True" name="Paulo Oracle PICS Database" uid="equipdaq" pwd="qdaq"/>
 	</connections>
 	<jobs>
 		<job id="Main" name="Upload Events and Download Schedule/Shop Order Information From Oracle">
@@ -23,8 +23,8 @@
 					<params/>
 					<foreach>
 						<command name="Send Equipment Event To Oracle" enabled="true" rowset="true" begintran="false" connid="ORACLE">
-							<!--This Command calls qdaq$PK_SCHEDULE_IQ_PLC.GetQueue which retrieves data from Oracle -->
-							<![CDATA[{call  qdaq$PK_SCHEDULE_IQ_PLC.SendEquipmentEvent (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)}]]>
+							<!--This Command calls equipdaq.PK_SCHEDULE_IQ_PLC.GetQueue which retrieves data from Oracle -->
+							<![CDATA[{call  qdaq$PK_SCHEDULE_IQ_PLC.SendEquipmentEvent (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)}]]>
 							<params>
 								<param  name="Al_PicsID" source="PICSID" type="adinteger" direction="adparaminput"/>
 								<param  name="Al_Schedule" source="ScheduleID" type="adinteger" direction="adparaminput"/>
@@ -33,7 +33,6 @@
 								<param  name="Al_Detail" source="ScheduleDetailSeq" type="adinteger" direction="adparaminput"/>
 								<param  name="Al_CC" source="CCID" type="adinteger" direction="adparaminput"/>
 								<param  name="Al_Equiment" source="EquipID" type="adinteger" direction="adparaminput"/>
-								<param  name="Adt_Timestamp" source="EventTimeStamp" type="addate" direction="adparaminput"/>
 								<param  name="Al_EventCode" source="OracleEventCode" type="adinteger" direction="adparaminput"/>
 								<param  name="Al_Activity" source="ActivityZone" type="adinteger" direction="adparaminput"/>
 								<param  name="Al_RecipeType" source="RecipeType" type="adinteger" direction="adparaminput"/>
@@ -43,10 +42,9 @@
 							<foreach>
 								<command name="Update Event Row In SQL" enabled="true" rowset="false" begintran="false" connid="SQL">
 									<!--This Command calls oiBHTEquipmentEventSent which Updates Row in SQL Server to Mark Success/Failure -->
-									<![CDATA[EXEC dbo.oiBHTEquipmentEventSent ?, ?]]>
+									<![CDATA[EXEC dbo.oiBHTEquipmentEventSent ?]]>
 									<params>
 										<param name="OI_EventID" source=".OI_EventID" type="adinteger" direction="adparaminput"/>
-										<param name="OracleReturnCode" source="RETURN_CODE" type="adinteger" direction="adparaminput"/>
 									</params>
 									<foreach/>
 								</command>

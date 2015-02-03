@@ -93,6 +93,7 @@ Public Class ETLCommand
             Rs.CursorLocation = CursorLocationEnum.adUseClient
             'UNCOMMENT - CONNECTION
             Debug.WriteLine("Calling moCmd START " + moCmd.CommandText)
+            'moCmd.CommandType = CommandType.StoredProcedure
             moRs.Open(moCmd)
             Debug.WriteLine("Calling moCmd END CHECK ROW COUNT = " + moRs.RecordCount.ToString())
 
@@ -148,7 +149,7 @@ Public Class ETLCommand
                     moRs.MoveNext()
                 Loop
             End If
-            moRs.Close()
+            'moRs.Close()
             moRs = Nothing
         Else
             'UNCOMMENT - CONNECTION
@@ -158,6 +159,8 @@ Public Class ETLCommand
 
 LocalExit:
         MainDebug("Function Exit: " & bReturn, cModule & cProcedure)
+        'moRs.Close()
+        moRs = Nothing
         Return bReturn
 
 LocalErrHandler:
@@ -166,6 +169,7 @@ LocalErrHandler:
 
     End Function
 
+    'Used as reference prior to chnages made using json.
     Friend Function Execute_ORIGINAL(ByRef oETLControl As ETLControl, ByRef ErrorMessage As String) As Boolean
         On Error GoTo LocalErrHandler
         Const cProcedure As String = "Execute()"
