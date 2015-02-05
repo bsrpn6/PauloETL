@@ -95,6 +95,7 @@ Public Class ETLCommand
             Debug.WriteLine("Calling moCmd START " + moCmd.CommandText)
             'moCmd.CommandType = CommandType.StoredProcedure
             moRs.Open(moCmd)
+            'moCmd.ExecuteNonQuery()
             Debug.WriteLine("Calling moCmd END CHECK ROW COUNT = " + moRs.RecordCount.ToString())
 
             If (moRs.RecordCount <> 0) And (moForEachDoCommand.Count > 0) Then
@@ -154,6 +155,29 @@ Public Class ETLCommand
         Else
             'UNCOMMENT - CONNECTION
             moCmd.ExecuteNonQuery()
+
+            Dim j As Int16 = 1
+            Dim oChildCommand As ETLCommand
+            Dim cmd As DbCommand
+
+            Dim e As IDictionaryEnumerator
+            e = moForEachDoCommand.GetEnumerator
+            While e.MoveNext()
+                Debug.WriteLine("moForEachDoCommand j " + j.ToString())
+                j += 1
+                oChildCommand = e.Value
+
+                'Debug.WriteLine(e.Key)
+                'oChildCommand.moCmd = moCmd
+                'oChildCommand.moParentCommand = Me
+                Debug.WriteLine("oChildComand START CALL EXEC " + oChildCommand.CmdName)
+                bReturn = oChildCommand.Execute(oETLControl, ErrorMessage)
+                Debug.WriteLine("oChildCommand END CALL EXEC " + oChildCommand.CmdName)
+                If Not bReturn Then
+                    GoTo LocalExit
+                End If
+                'Next oChildCommandEntry
+            End While
         End If
         bReturn = True
 

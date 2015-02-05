@@ -22,9 +22,9 @@
 					<![CDATA[EXEC dbo.oiBHTEquipmentEventsGet]]>
 					<params/>
 					<foreach>
-						<command name="Send Equipment Event To Oracle" enabled="true" rowset="true" begintran="false" connid="ORACLE">
+						<command name="Send Equipment Event To Oracle" enabled="true" rowset="false" begintran="false" connid="ORACLE">
 							<!--This Command calls equipdaq.PK_SCHEDULE_IQ_PLC.GetQueue which retrieves data from Oracle -->
-							<![CDATA[{call  qdaq$PK_SCHEDULE_IQ_PLC.SendEquipmentEvent (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)}]]>
+							<![CDATA[{call  qdaq$PK_SCHEDULE_IQ_PLC.SendEquipmentEvent (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)}]]>
 							<params>
 								<param  name="Al_PicsID" source="PICSID" type="adinteger" direction="adparaminput"/>
 								<param  name="Al_Schedule" source="ScheduleID" type="adinteger" direction="adparaminput"/>
@@ -32,6 +32,7 @@
 								<param  name="Al_StepOrder" source="ScheduleDetailStepNum" type="adinteger" direction="adparaminput"/>
 								<param  name="Al_Detail" source="ScheduleDetailSeq" type="adinteger" direction="adparaminput"/>
 								<param  name="Al_CC" source="CCID" type="adinteger" direction="adparaminput"/>
+								<param  name="Adt_Timestamp" source="EventTimeStamp" type="addate" direction="adparaminput"/>
 								<param  name="Al_Equiment" source="EquipID" type="adinteger" direction="adparaminput"/>
 								<param  name="Al_EventCode" source="OracleEventCode" type="adinteger" direction="adparaminput"/>
 								<param  name="Al_Activity" source="ActivityZone" type="adinteger" direction="adparaminput"/>
@@ -42,9 +43,10 @@
 							<foreach>
 								<command name="Update Event Row In SQL" enabled="true" rowset="false" begintran="false" connid="SQL">
 									<!--This Command calls oiBHTEquipmentEventSent which Updates Row in SQL Server to Mark Success/Failure -->
-									<![CDATA[EXEC dbo.oiBHTEquipmentEventSent ?]]>
+									<![CDATA[EXEC dbo.oiBHTEquipmentEventSent ?, ?]]>
 									<params>
 										<param name="OI_EventID" source=".OI_EventID" type="adinteger" direction="adparaminput"/>
+										<param name="OracleReturnCode" source="RETURN_CODE" type="adinteger" direction="adparaminput"/>
 									</params>
 									<foreach/>
 								</command>
@@ -59,7 +61,7 @@
 					<![CDATA[EXEC dbo.oiBHTShopOrderWeightsGet]]>
 					<params/>
 					<foreach>
-						<command name="Send Shop Order Weight To Oracle" enabled="true" rowset="true" begintran="false" connid="ORACLE">
+						<command name="Send Shop Order Weight To Oracle" enabled="true" rowset="false" begintran="false" connid="ORACLE">
 							<!--This Command calls qdaq$PK_SCHEDULE_IQ_PLC.SetActualWeight to send event to Oracle -->
 							<![CDATA[{call  qdaq$PK_SCHEDULE_IQ_PLC.SetActualWeight (?, ?, ?, ?, ?, ?, ?, ?)}]]>
 							<params>
@@ -93,7 +95,7 @@
 					<![CDATA[EXEC dbo.oiBHTScheduleGrossWeightGet]]>
 					<params/>
 					<foreach>
-						<command name="Send Gross Weight To Oracle" enabled="true" rowset="true" begintran="false" connid="ORACLE">
+						<command name="Send Gross Weight To Oracle" enabled="true" rowset="false" begintran="false" connid="ORACLE">
 							<!--This Command calls qdaq$PK_SCHEDULE_IQ_PLC.SetActualGrossWeight to send event to Oracle -->
 							<![CDATA[{call  qdaq$PK_SCHEDULE_IQ_PLC.SetActualGrossWeight (?, ?, ?, ?, ?, ?)}]]>
 							<params>
