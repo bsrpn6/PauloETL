@@ -78,14 +78,10 @@ Public Class ETLCommands
 		End Get
 	End Property
 
-	'UPGRADE_ISSUE: (2068) IUnknown object was not upgraded. More Information: http://www.vbtonet.com/ewis/ewi2068.aspx
-
 	Public Function GetEnumerator() As IEnumerator Implements System.Collections.IEnumerable.GetEnumerator
 		'this property allows you to enumerate
         'this collection with the For...Each syntax
-
         Return mCol.GetEnumerator()
-
     End Function
 
 	Friend Sub New()

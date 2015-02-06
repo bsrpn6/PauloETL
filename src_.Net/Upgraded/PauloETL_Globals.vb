@@ -63,7 +63,7 @@ Module Globals
 			Case "adboolean"
 				vReturn = DbType.Boolean
 			Case "addate"
-				vReturn = DbType.Date
+                vReturn = DbType.DateTime
 			Case "adinteger"
 				vReturn = DbType.Int32
 			Case "adsingle"

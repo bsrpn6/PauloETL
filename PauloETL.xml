@@ -32,8 +32,8 @@
 								<param  name="Al_StepOrder" source="ScheduleDetailStepNum" type="adinteger" direction="adparaminput"/>
 								<param  name="Al_Detail" source="ScheduleDetailSeq" type="adinteger" direction="adparaminput"/>
 								<param  name="Al_CC" source="CCID" type="adinteger" direction="adparaminput"/>
-								<param  name="Adt_Timestamp" source="EventTimeStamp" type="addate" direction="adparaminput"/>
 								<param  name="Al_Equiment" source="EquipID" type="adinteger" direction="adparaminput"/>
+								<param  name="Adt_Timestamp" source="EventTimeStamp" type="addate" direction="adparaminput"/>
 								<param  name="Al_EventCode" source="OracleEventCode" type="adinteger" direction="adparaminput"/>
 								<param  name="Al_Activity" source="ActivityZone" type="adinteger" direction="adparaminput"/>
 								<param  name="Al_RecipeType" source="RecipeType" type="adinteger" direction="adparaminput"/>

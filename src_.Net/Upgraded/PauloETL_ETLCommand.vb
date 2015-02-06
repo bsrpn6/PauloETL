@@ -50,7 +50,6 @@ Public Class ETLCommand
             GoTo LocalExit
         End If
 
-
         Debug.WriteLine("Executing " & msCmdName & moCmd.CommandText)
 
         Dim s As Newtonsoft.Json.JsonSerializerSettings = New Newtonsoft.Json.JsonSerializerSettings
@@ -93,9 +92,7 @@ Public Class ETLCommand
             Rs.CursorLocation = CursorLocationEnum.adUseClient
             'UNCOMMENT - CONNECTION
             Debug.WriteLine("Calling moCmd START " + moCmd.CommandText)
-            'moCmd.CommandType = CommandType.StoredProcedure
             moRs.Open(moCmd)
-            'moCmd.ExecuteNonQuery()
             Debug.WriteLine("Calling moCmd END CHECK ROW COUNT = " + moRs.RecordCount.ToString())
 
             If (moRs.RecordCount <> 0) And (moForEachDoCommand.Count > 0) Then
@@ -104,10 +101,7 @@ Public Class ETLCommand
                 moRs.MoveFirst()
                 Dim i As Int16 = 1
 
-
                 Dim saveSrcCommand As ETLCommand
-
-
 
                 Do While Not moRs.EOF
                     Debug.WriteLine("moRs i " + i.ToString())
@@ -115,13 +109,6 @@ Public Class ETLCommand
                     Dim j As Int16 = 1
                     Dim oChildCommand As ETLCommand
                     Dim cmd As DbCommand
-
-                    'cmd = 
-                    'If (Not (moParentCommand Is Nothing)) And (mbHasParameters) Then
-                    'For I As Integer = 0 To moCmd.Parameters.Count - 1
-                    'sSource = mvParamSources(i)
-                    'Set Default Source Command Pointer to Parent Command
-                    'oSrcCommand = moParentCommand
 
                     ' For Each oChildCommandEntry As OrderedDictionary In moForEachDoCommand.GetEnumerator()
                     Dim e As IDictionaryEnumerator
@@ -136,9 +123,6 @@ Public Class ETLCommand
 
                         oChildCommand.moParentCommand = saveSrcCommand
 
-                        'Debug.WriteLine(e.Key)
-                        'oChildCommand.moCmd = moCmd
-                        'oChildCommand.moParentCommand = Me
                         Debug.WriteLine("oChildComand START CALL EXEC " + oChildCommand.CmdName)
                         bReturn = oChildCommand.Execute(oETLControl, ErrorMessage)
                         Debug.WriteLine("oChildCommand END CALL EXEC " + oChildCommand.CmdName)
@@ -167,9 +151,6 @@ Public Class ETLCommand
                 j += 1
                 oChildCommand = e.Value
 
-                'Debug.WriteLine(e.Key)
-                'oChildCommand.moCmd = moCmd
-                'oChildCommand.moParentCommand = Me
                 Debug.WriteLine("oChildComand START CALL EXEC " + oChildCommand.CmdName)
                 bReturn = oChildCommand.Execute(oETLControl, ErrorMessage)
                 Debug.WriteLine("oChildCommand END CALL EXEC " + oChildCommand.CmdName)
@@ -185,134 +166,6 @@ LocalExit:
         MainDebug("Function Exit: " & bReturn, cModule & cProcedure)
         'moRs.Close()
         moRs = Nothing
-        Return bReturn
-
-LocalErrHandler:
-        ErrorMessage = MainErrHandler(Information.Err().Number, Information.Err().Description, cModule & cProcedure, msLocation)
-        Resume LocalExit
-
-    End Function
-
-    'Used as reference prior to chnages made using json.
-    Friend Function Execute_ORIGINAL(ByRef oETLControl As ETLControl, ByRef ErrorMessage As String) As Boolean
-        On Error GoTo LocalErrHandler
-        Const cProcedure As String = "Execute()"
-        Dim bReturn As Boolean
-        Dim sSource As String = ""
-        Dim oSrcCommand As ETLCommand
-
-        If mbEnabled Then
-            bReturn = False
-        Else
-            bReturn = True
-            GoTo LocalExit
-        End If
-        Debug.WriteLine("Executing " & msCmdName & moCmd.CommandText)
-
-        Dim sParams As String = ""
-
-        If (Not (moParentCommand Is Nothing)) And (mbHasParameters) Then
-            For I As Integer = 0 To moCmd.Parameters.Count - 1
-                sSource = mvParamSources(I)
-                'Set Default Source Command Pointer to Parent Command
-                oSrcCommand = moParentCommand
-                'If Prefix of Source is . Then Move to Source's Parent Recursively
-                Do While sSource.StartsWith(".")
-                    oSrcCommand = moParentCommand.ParentCommand
-                    sSource = sSource.Substring(Math.Max(1, 0))
-                Loop
-                If sSource.StartsWith("@") Then
-                    moCmd.Parameters(I).Value = oSrcCommand.Cmd.Parameters(sSource.Substring(Math.Max(1, 0))).Value
-                Else
-                    moCmd.Parameters(I).Value = oSrcCommand.Rs(sSource)
-                End If
-
-                sParams += I.ToString() + " " + sSource + "=" + moCmd.Parameters(I).Value.ToString() + ", "
-
-            Next I
-
-            Debug.WriteLine("The Params are:")
-            Debug.WriteLine(sParams)
-
-        End If
-
-
-
-        If mbUseDebugForm Then
-            moDebugForm.Show()
-            mbDebugFormLoaded = True
-        End If
-        'REMOVE - DEBUGGING THAT DOESN'T WORK
-        '  Debug.Print moETLConnection.Cn.State
-        If mbRowSet Then
-            moRs = New ADORecordSetHelper("")
-            Rs.CursorLocation = CursorLocationEnum.adUseClient
-            'UNCOMMENT - CONNECTION
-            Debug.WriteLine("Calling moCmd START " + moCmd.CommandText)
-            moRs.Open(moCmd)
-            Debug.WriteLine("Calling moCmd END CHECK ROW COUNT = " + moRs.RecordCount.ToString())
-            If (moRs.RecordCount <> 0) And (moForEachDoCommand.Count > 0) Then
-                Debug.WriteLine("Rows: " & moRs.RecordCount)
-
-                'REMOVE - DEGBUGGING THAT DOESN'T WORK
-                'If mbUseDebugForm Then
-                'moDebugForm.DataGrid1.DataSource = moRs.Tables(0)
-                'UPGRADE_ISSUE: (2064) ADODB.Recordset property moRs.Fields was not upgraded. More Information: http://www.vbtonet.com/ewis/ewi2064.aspx
-                'For Each fld As ADOFieldHelper In moRs.Fields
-                ''UPGRADE_ISSUE: (2064) ADODB.Field property fld.ActualSize was not upgraded. More Information: http://www.vbtonet.com/ewis/ewi2064.aspx
-                'Debug.WriteLine(VB6.TabLayout(fld.FieldMetadata.ColumnName, CStr(ADORecordSetHelper.GetDBType(fld.FieldMetadata.DataType)), CStr(fld.ActualSize)))
-                '   Next fld/*
-
-                If mbUseDebugForm Then
-                    moDebugForm.DataGrid1.DataSource = moRs.Tables(0)
-                    For Each fld As DataColumn In moRs.Tables(0).Columns
-                        'Note that the MaxLenght property is different than the ActualSize property.
-                        Debug.WriteLine(VB6.TabLayout(fld.ColumnName, CStr(ADORecordSetHelper.GetDBType(fld.DataType)), CStr(fld.MaxLength)))
-                    Next fld
-                End If
-
-                moRs.MoveFirst()
-                Do While Not moRs.EOF
-                    If mbDebugFormLoaded Then
-                        moDebugForm.Show()
-                    End If
-
-                    'Dim oChildCommand As ETLCommand
-                    'For I As Integer = 1 To moForEach.Count
-                    '    oChildCommand = moForEach.Item(I)
-                    '    bReturn = oChildCommand.Execute(oETLControl, ErrorMessage)
-                    '    If Not bReturn Then
-                    '        GoTo LocalExit
-                    '    End If
-                    'Next
-
-
-                    '   For Each oChildCommand As ETLCommand In moForEach
-
-
-
-                    For Each oChildCommandEntry As Object In moForEachDoCommand
-
-                        Dim oChildCommand As ETLCommand = oChildCommandEntry.Value
-
-                        bReturn = oChildCommand.Execute(oETLControl, ErrorMessage)
-                        If Not bReturn Then
-                            GoTo LocalExit
-                        End If
-                    Next oChildCommandEntry
-                    moRs.MoveNext()
-                Loop
-            End If
-            moRs.Close()
-            moRs = Nothing
-        Else
-            'UNCOMMENT - CONNECTION
-            moCmd.ExecuteNonQuery()
-        End If
-        bReturn = True
-
-LocalExit:
-        MainDebug("Function Exit: " & bReturn, cModule & cProcedure)
         Return bReturn
 
 LocalErrHandler:
@@ -383,12 +236,6 @@ LocalErrHandler:
 
                 vParamSize = GetAttributeHelper(oParamNode)
 
-                ''UPGRADE_WARNING: (1049) Use of Null/IsNull() detected. More Information: http://www.vbtonet.com/ewis/ewi1049.aspx
-
-                '  If Not Convert.IsDBNull(vParamSize) Then
-                ' oParam.Size = vParamSize
-                ' End If
-
                 If vParamSize > 0 Then
                     oParam.Size = vParamSize
                 End If
@@ -410,8 +257,6 @@ LocalErrHandler:
         oForEachNode = Nothing
 
 LocalExit:
-        ' Dim json As String = JsonConvert.SerializeObject(Me)
-        ' Debug.WriteLine(json)
         MainDebug("Function Exit: " & bReturn, cModule & cProcedure)
         Return bReturn
 

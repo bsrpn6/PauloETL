@@ -17,7 +17,6 @@ Public Class ETLControl
 	Private mbXMLDocLoaded As Boolean
 	'Private msLocation As String
 
-
 	Public Function LoadXMLConfig(ByVal XMLFileName As String, ByRef ErrorMessage As String) As Integer
 		Const cProcedure As String = "LoadXMLConfig()"
 		Dim lReturn As Integer = 0
@@ -25,12 +24,7 @@ Public Class ETLControl
 
 			lReturn = 0
             mbXMLDocLoaded = False
-            'REMOVE - UNSUPPORTED
-			'UPGRADE_ISSUE: (2064) MSXML2.DOMDocument60 property moXMLDoc.validateOnParse was not upgraded. More Information: http://www.vbtonet.com/ewis/ewi2064.aspx
-            'moXMLDoc.validateOnParse = False
-			'UPGRADE_ISSUE: (2064) MSXML2.DOMDocument60 property moXMLDoc.async was not upgraded. More Information: http://www.vbtonet.com/ewis/ewi2064.aspx
-            'moXMLDoc.async = False
-			'Load XML Into Document Object
+
 			Dim temp_xml_result As Boolean
 			Try
 				moXMLDoc.Load(XMLFileName)
@@ -42,17 +36,6 @@ Public Class ETLControl
 			If Not temp_xml_result Then
 				ErrorMessage = MainErrHandler(0, "Error Loading XML File", cModule & cProcedure)
             Else
-                'REMOVE - UNSUPPORTED
-                'Validate XML Against Schema
-                'UPGRADE_ISSUE: (2064) MSXML2.DOMDocument60 method moXMLDoc.Validate was not upgraded. More Information: http://www.vbtonet.com/ewis/ewi2064.aspx
-                'moXMLDoc.Validate()
-                'UPGRADE_ISSUE: (2064) MSXML2.DOMDocument60 property moXMLDoc.parseError was not upgraded. More Information: http://www.vbtonet.com/ewis/ewi2064.aspx
-                'UPGRADE_ISSUE: (2064) MSXML2.IXMLDOMParseError property moXMLDoc.parseError.ErrorCode was not upgraded. More Information: http://www.vbtonet.com/ewis/ewi2064.aspx
-                'If moXMLDoc.parseError.errorCode <> 0 Then
-                'UPGRADE_ISSUE: (2064) MSXML2.DOMDocument60 property moXMLDoc.parseError was not upgraded. More Information: http://www.vbtonet.com/ewis/ewi2064.aspx
-                'UPGRADE_ISSUE: (2064) MSXML2.IXMLDOMParseError property moXMLDoc.parseError.srcText was not upgraded. More Information: http://www.vbtonet.com/ewis/ewi2064.aspx
-                'ErrorMessage = MainErrHandler(0, "Error Validating XML File: " & Environment.NewLine & moXMLDoc.parseError.srcText, cModule & cProcedure)
-                'Else
                 'Load Connections Into Collection
                 If Not (moETLConnections.LoadFromXML(moXMLDoc, ErrorMessage) = 0) Then
                     'Return Success
@@ -122,9 +105,9 @@ Public Class ETLControl
 			oETLCommandNode = StepNode.SelectSingleNode("command")
 			oETLCommand = New ETLCommand()
 			If oETLCommand.LoadFromXML(oETLCommandNode, Me, sLocation, ErrorMessage) Then
-				If oETLCommand.Execute(Me, ErrorMessage) Then
-					lReturn = 1
-				End If
+                If oETLCommand.Execute(Me, ErrorMessage) Then
+                    lReturn = 1
+                End If
 			End If
 			oETLCommand = Nothing
 

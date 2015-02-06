@@ -28,24 +28,12 @@ Public Class ETLConnections
 			lReturn = 0
 			'Load NodeList of Connections
 			oNodeList = XMLDoc.SelectNodes("//root/connections/connection")
-			lNodeCount = oNodeList.Count
-			If lNodeCount < 2 Then
-				ErrorMessage = MainErrHandler(0, "Error, File Must Have At Least 2 Connections Defined", cModule & cProcedure)
-			Else
-				'Loop Through Connections
-                'For I As Integer = 1 To lNodeCount
-                '	'UPGRADE_WARNING: (2065) MSXML2.IXMLDOMNodeList method oNodeList.nextNode has a new behavior. More Information: http://www.vbtonet.com/ewis/ewi2065.aspx
-                '                oNode = oNodeList.GetEnumerator().Current
-                '	oETLConnection = New ETLConnection()
-                '	If oETLConnection.LoadFromXML(oNode, ErrorMessage) Then
-                '		mCol.Add(oETLConnection.ID, oETLConnection)
-                '	Else
-                '		lNodeCount = 0
-                '		Exit For
-                '	End If
-                '            Next I
+            lNodeCount = oNodeList.Count
 
-                'ADAM CODE
+			If lNodeCount < 2 Then
+                ErrorMessage = MainErrHandler(0, "Error, File Must Have At Least 2 Connections Defined", cModule & cProcedure)
+
+			Else
                 Dim oNodeEnumerator As Object 'As System.Xml.XmlNodeListEnumerator
                 oNodeEnumerator = oNodeList.GetEnumerator()
 
@@ -59,7 +47,6 @@ Public Class ETLConnections
                         Exit While
                     End If
                 End While
-
 
                 lReturn = lNodeCount
 
@@ -93,9 +80,6 @@ Public Class ETLConnections
             Return mCol.Count
         End Get
     End Property
-
-
-    'UPGRADE_ISSUE: (2068) IUnknown object was not upgraded. More Information: http://www.vbtonet.com/ewis/ewi2068.aspx
 
     Public Function GetEnumerator() As IEnumerator Implements System.Collections.IEnumerable.GetEnumerator
         'this property allows you to enumerate

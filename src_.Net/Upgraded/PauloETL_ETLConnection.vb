@@ -66,9 +66,7 @@ Public Class ETLConnection
 
 	Public ReadOnly Property IsOpen() As Boolean
 		Get
-
 			Return moCn.State = ConnectionState.Open
-
 		End Get
 	End Property
 
