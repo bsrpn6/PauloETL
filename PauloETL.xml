@@ -22,7 +22,7 @@
 					<![CDATA[EXEC dbo.oiBHTEquipmentEventsGet]]>
 					<params/>
 					<foreach>
-						<command name="Send Equipment Event To Oracle" enabled="true" rowset="false" begintran="false" connid="ORACLE">
+						<command name="Send Equipment Event To Oracle" enabled="true" rowset="true" begintran="false" connid="ORACLE">
 							<!--This Command calls equipdaq.PK_SCHEDULE_IQ_PLC.GetQueue which retrieves data from Oracle -->
 							<![CDATA[{call  qdaq$PK_SCHEDULE_IQ_PLC.SendEquipmentEvent (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)}]]>
 							<params>
