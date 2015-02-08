@@ -2,30 +2,24 @@ Option Strict Off
 Option Explicit On
 Imports Microsoft.VisualBasic
 Imports System
-Imports System.Data
 Imports System.Data.Common
 Imports System.Diagnostics
-Imports System.Windows.Forms
 Imports System.Xml
-Imports UpgradeHelpers.DB.ADO
 Imports UpgradeHelpers.Helpers
-Imports System.Web.Script.Serialization
 Imports Newtonsoft.Json
-Imports System.Collections.Specialized
+Imports System.Data.OracleClient
 
 Public Class ETLCommand
-	'Constant for Module Name Used In Error Functions
-	Const cModule As String = "ETLCommand."
-
-	Private moCommandNode As XmlElement
-	Private moCmd As DbCommand
-	Private moRs As ADORecordSetHelper
+    'Constant for Module Name Used In Error Functions
+    Const cModule As String = "ETLCommand."
+    Private dataReader As DbDataReader
+    Private moCommandNode As XmlElement
+    Private moCmd As DbCommand
     Private moForEachDoCommand As ETLCommands
     Private moParentCommand As ETLCommand
     Private moETLConnection As ETLConnection
     Private mvParamSources() As String
     Private moDebugForm As frmETLCommand
-
     Private msCmdName As String = ""
     Private msConnID As String = ""
     Private mbRowSet As Boolean
@@ -55,7 +49,12 @@ Public Class ETLCommand
         Dim s As Newtonsoft.Json.JsonSerializerSettings = New Newtonsoft.Json.JsonSerializerSettings
         s.ReferenceLoopHandling = ReferenceLoopHandling.Ignore
 
-        Dim json As String = JsonConvert.SerializeObject(Me, s)
+        ' If moParentCommand IsNot Nothing Then
+        'Dim reader As DbDataReader = moParentCommand.dataReader
+        'Dim val = reader.GetValue(0)
+        'End If
+
+        'Dim json As String = JsonConvert.SerializeObject(Me, s)
 
         'Debug.WriteLine(json)
 
@@ -67,18 +66,29 @@ Public Class ETLCommand
                 sSource = mvParamSources(I)
                 'Set Default Source Command Pointer to Parent Command
                 oSrcCommand = moParentCommand
+
                 'If Prefix of Source is . Then Move to Source's Parent Recursively
                 Do While sSource.StartsWith(".")
                     oSrcCommand = moParentCommand.ParentCommand
                     sSource = sSource.Substring(Math.Max(1, 0))
                 Loop
+
                 If sSource.StartsWith("@") Then
                     moCmd.Parameters(I).Value = oSrcCommand.Cmd.Parameters(sSource.Substring(Math.Max(1, 0))).Value
                 Else
-                    moCmd.Parameters(I).Value = oSrcCommand.Rs(sSource)
+                    If moCmd.Parameters(I).Direction = ParameterDirection.Input Then
+                        Dim col = oSrcCommand.dataReader.GetOrdinal(sSource)
+                        Dim val = oSrcCommand.dataReader.GetValue(col)
+
+                        moCmd.Parameters(I).Value = val
+                    End If
                 End If
 
-                sParams += I.ToString() + " " + sSource + "=" + moCmd.Parameters(I).Value.ToString() + ", "
+
+                If moCmd.Parameters(I).Value IsNot Nothing Then
+                    sParams += I.ToString() + " " + sSource + "=" + moCmd.Parameters(I).Value.ToString() + ", "
+                End If
+
 
             Next I
 
@@ -88,40 +98,36 @@ Public Class ETLCommand
         End If
 
         If mbRowSet Then
-            moRs = New ADORecordSetHelper("")
-            Rs.CursorLocation = CursorLocationEnum.adUseClient
-            'UNCOMMENT - CONNECTION
+
             Debug.WriteLine("Calling moCmd START " + moCmd.CommandText)
-            moRs.Open(moCmd)
-            Debug.WriteLine("Calling moCmd END CHECK ROW COUNT = " + moRs.RecordCount.ToString())
+            dataReader = moCmd.ExecuteReader()
 
-            If (moRs.RecordCount <> 0) And (moForEachDoCommand.Count > 0) Then
-                Debug.WriteLine("Rows: " & moRs.RecordCount)
-
-                moRs.MoveFirst()
+            If (dataReader.HasRows) And (moForEachDoCommand.Count > 0) Then
                 Dim i As Int16 = 1
-
                 Dim saveSrcCommand As ETLCommand
 
-                Do While Not moRs.EOF
+                Do While dataReader.Read()
                     Debug.WriteLine("moRs i " + i.ToString())
                     i += 1
+
                     Dim j As Int16 = 1
                     Dim oChildCommand As ETLCommand
                     Dim cmd As DbCommand
+                    Dim e As IDictionaryEnumerator
+
+                    e = moForEachDoCommand.GetEnumerator
 
                     ' For Each oChildCommandEntry As OrderedDictionary In moForEachDoCommand.GetEnumerator()
-                    Dim e As IDictionaryEnumerator
-                    e = moForEachDoCommand.GetEnumerator
                     While e.MoveNext()
                         Debug.WriteLine("moForEachDoCommand j " + j.ToString())
                         j += 1
                         oChildCommand = e.Value
-                        If saveSrcCommand Is Nothing Then
-                            saveSrcCommand = oChildCommand.moParentCommand
-                        End If
+                        ' If saveSrcCommand Is Nothing Then
+                        '    saveSrcCommand = oChildCommand.moParentCommand
+                        'End If
 
-                        oChildCommand.moParentCommand = saveSrcCommand
+                        'oChildCommand.moParentCommand = saveSrcCommand
+                        oChildCommand.moParentCommand = Me
 
                         Debug.WriteLine("oChildComand START CALL EXEC " + oChildCommand.CmdName)
                         bReturn = oChildCommand.Execute(oETLControl, ErrorMessage)
@@ -131,41 +137,17 @@ Public Class ETLCommand
                         End If
                         'Next oChildCommandEntry
                     End While
-                    moRs.MoveNext()
                 Loop
             End If
-            'moRs.Close()
-            moRs = Nothing
+
         Else
-            'UNCOMMENT - CONNECTION
             moCmd.ExecuteNonQuery()
-
-            Dim j As Int16 = 1
-            Dim oChildCommand As ETLCommand
-            Dim cmd As DbCommand
-
-            Dim e As IDictionaryEnumerator
-            e = moForEachDoCommand.GetEnumerator
-            While e.MoveNext()
-                Debug.WriteLine("moForEachDoCommand j " + j.ToString())
-                j += 1
-                oChildCommand = e.Value
-
-                Debug.WriteLine("oChildComand START CALL EXEC " + oChildCommand.CmdName)
-                bReturn = oChildCommand.Execute(oETLControl, ErrorMessage)
-                Debug.WriteLine("oChildCommand END CALL EXEC " + oChildCommand.CmdName)
-                If Not bReturn Then
-                    GoTo LocalExit
-                End If
-                'Next oChildCommandEntry
-            End While
         End If
+
         bReturn = True
 
 LocalExit:
         MainDebug("Function Exit: " & bReturn, cModule & cProcedure)
-        'moRs.Close()
-        moRs = Nothing
         Return bReturn
 
 LocalErrHandler:
@@ -177,7 +159,6 @@ LocalErrHandler:
     Friend Function LoadFromXML(ByRef oNode As XmlElement, ByRef oETLControl As ETLControl, ByVal ParentLocation As String, ByRef ErrorMessage As String, Optional ByRef ParentCommand As ETLCommand = Nothing) As Boolean
         On Error GoTo LocalErrHandler
         Const cProcedure As String = "LoadFromXML()"
-        'INVESTIGATE
         Dim vParamSize As Long
         Dim bReturn As Boolean
         Dim sParamType, sParamName, sParamDirection As String
@@ -189,37 +170,59 @@ LocalErrHandler:
         bReturn = False
         msCmdName = ReflectionHelper.GetPrimitiveValue(Of String)(oNode.GetAttribute("name"))
         msLocation = ParentLocation & Environment.NewLine & "Command:  " & msCmdName
+
         mbEnabled = ReflectionHelper.GetPrimitiveValue(Of Boolean)(oNode.GetAttribute("enabled"))
         If Not mbEnabled Then
             bReturn = True
             GoTo LocalExit
         End If
+
         Debug.WriteLine("Loading Command From XML: " & msCmdName)
         mbRowSet = ReflectionHelper.GetPrimitiveValue(Of Boolean)(oNode.GetAttribute("rowset"))
         mbBeginTran = ReflectionHelper.GetPrimitiveValue(Of Boolean)(oNode.GetAttribute("begintran"))
         msConnID = ReflectionHelper.GetPrimitiveValue(Of String)(oNode.GetAttribute("connid"))
-        'REMOVE - CHANGED
-        'moCmd.CommandText = GetXmlCData(ReflectionHelper.GetPrimitiveValue(Of XmlNode)(oNode))
+
+        If msConnID = "ORACLE" Then
+
+            moCmd = New OracleCommand()
+
+        Else
+
+            moCmd = UpgradeHelpers.DB.AdoFactoryManager.GetFactory().CreateCommand()
+        End If
+
+
         moCmd.CommandText = GetXmlCData(oNode)
+
         If moCmd.CommandText = "" Then
             ErrorMessage = MainErrHandler(0, "Command Element Does Not Have SQL Statement in CDATA Section", cModule & cProcedure, msLocation)
             GoTo LocalExit
         End If
+
         moETLConnection = oETLControl.ETLConnections(msConnID)
-        'UNCOMMENT - CONNECTION
+
         If Not moETLConnection.IsOpen Then
             If Not moETLConnection.OpenConnection(ErrorMessage) Then
                 GoTo LocalExit
             End If
         End If
+
         moCmd.Connection = moETLConnection.Cn
+
         If Not (ParentCommand Is Nothing) Then
             moParentCommand = ParentCommand
         End If
+
         oParamNodes = oNode.SelectNodes("params/param")
+
         If oParamNodes.Count > 0 Then
+            If msConnID = "ORACLE" Then
+                moCmd.CommandType = CommandType.StoredProcedure
+            End If
+
             ReDim mvParamSources(oParamNodes.Count - 1)
             mbHasParameters = True
+
             For I As Integer = 1 To oParamNodes.Count
                 oParamNode = oParamNodes.Item(I - 1)
                 sParamName = ReflectionHelper.GetPrimitiveValue(Of String)(oParamNode.GetAttribute("name"))
@@ -229,7 +232,14 @@ LocalErrHandler:
                 Dim TempParameter As DbParameter
                 TempParameter = moCmd.CreateParameter()
                 TempParameter.ParameterName = sParamName
-                TempParameter.DbType = GetADODataType(sParamType)
+
+                If msConnID = "ORACLE" And sParamType = "adcursor" Then
+                    Dim oracleParam As OracleParameter
+                    oracleParam = TempParameter
+                    oracleParam.OracleType = OracleType.Cursor
+                Else
+                    TempParameter.DbType = GetADODataType(sParamType)
+                End If
                 TempParameter.Direction = GetADOParamDir(sParamDirection)
                 oParam = TempParameter
                 'INVESTIGATE
@@ -244,16 +254,21 @@ LocalErrHandler:
                 oParam = Nothing
             Next I
         End If
+
         oParamNodes = Nothing
+
         If oETLControl.ShowDebugForm Then
             mbUseDebugForm = True
             moDebugForm = frmETLCommand.CreateInstance()
             moDebugForm.Text = msCmdName
         End If
+
         oForEachNode = oNode.SelectSingleNode("foreach")
+
         If moForEachDoCommand.LoadFromXML(oForEachNode, oETLControl, msLocation, ErrorMessage, Me) >= 0 Then
             bReturn = True
         End If
+
         oForEachNode = Nothing
 
 LocalExit:
@@ -268,6 +283,7 @@ LocalErrHandler:
 
     Function GetAttributeHelper(ByVal oParamNode As XmlElement) As Long
         Dim value As Long
+
         Try
             value = ReflectionHelper.GetPrimitiveValue(Of Integer)(oParamNode.GetAttribute("size"))
         Catch ex As Exception
@@ -295,9 +311,9 @@ LocalErrHandler:
         End Get
     End Property
 
-    Public ReadOnly Property Rs() As ADORecordSetHelper
+    Public ReadOnly Property Reader() As DbDataReader
         Get
-            Return moRs
+            Return dataReader
         End Get
     End Property
 
@@ -333,22 +349,23 @@ LocalErrHandler:
 
     Friend Sub New()
         MyBase.New()
-        moCmd = UpgradeHelpers.DB.AdoFactoryManager.GetFactory().CreateCommand()
         moForEachDoCommand = New ETLCommands()
     End Sub
 
     Protected Overrides Sub Finalize()
         moCommandNode = Nothing
-        moRs = Nothing
+        dataReader = Nothing
         moCmd = Nothing
         moForEachDoCommand = Nothing
         moParentCommand = Nothing
         moETLConnection = Nothing
+
         If mbDebugFormLoaded Then
             moDebugForm.Close()
         End If
         If mbUseDebugForm Then
             moDebugForm = Nothing
         End If
+
     End Sub
 End Class

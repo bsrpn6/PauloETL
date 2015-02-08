@@ -90,6 +90,7 @@
 			<xs:enumeration value="adinteger"/>
 			<xs:enumeration value="advarchar"/>
 			<xs:enumeration value="adsingle"/>
+      <xs:enumeration value="adcursor"/>
 		</xs:restriction>
 	</xs:simpleType>
 	<xs:simpleType name="adoparamdirection">
