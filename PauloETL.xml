@@ -4,7 +4,7 @@
 <root xsi:noNamespaceSchemaLocation="ETLSchema.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
 	<connections>
 		<connection id="SQL" connstring="Provider='sqloledb';Data Source=STLFTTMA;Initial Catalog=PauloWIP;Persist Security Info=True;User ID=process;Password='process'" name="Paulo Site WIP Database" uid="process" pwd="process"/>
-		<connection id="ORACLE" connstring="Data Source=STLDAQCR;Persist Security Info=True;User ID=equipdaq;Password=qdaq;Unicode=True" name="Paulo Oracle PICS Database" uid="equipdaq" pwd="qdaq"/>
+		<connection id="ORACLE" connstring="Provider=OraOLEDB.Oracle;Data Source=STLDAQCR;Persist Security Info=True;User ID=equipdaq;Password=qdaq;Unicode=True" name="Paulo Oracle PICS Database" uid="equipdaq" pwd="qdaq"/>
 	</connections>
 	<jobs>
 		<job id="Main" name="Upload Events and Download Schedule/Shop Order Information From Oracle">
@@ -24,7 +24,7 @@
 					<foreach>
 						<command name="Send Equipment Event To Oracle" enabled="true" rowset="true" begintran="false" connid="ORACLE">
 							<!--This Command calls equipdaq.PK_SCHEDULE_IQ_PLC.GetQueue which retrieves data from Oracle -->
-							<![CDATA[PK_SCHEDULE_IQ_PLC.SendEquipmentEvent(:Al_PicsID, :Al_Schedule, :Al_Subset, :Al_StepOrder, :Al_Detail, :Al_CC, :Al_Equiment, :Adt_Timestamp, :Al_EventCode, :Al_Activity, :Al_RecipeType, :Al_RecipeTime, :Al_RecipeType, :Ac_ReturnCode ]]>
+							<![CDATA[{call  qdaq$PK_SCHEDULE_IQ_PLC.SendEquipmentEvent (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)}]]>
 							<params>
 								<param  name="Al_PicsID" source="PICSID" type="adinteger" direction="adparaminput"/>
 								<param  name="Al_Schedule" source="ScheduleID" type="adinteger" direction="adparaminput"/>
@@ -39,7 +39,6 @@
 								<param  name="Al_RecipeType" source="RecipeType" type="adinteger" direction="adparaminput"/>
 								<param  name="Al_RecipeTime" source="RecipeTime" type="adinteger" direction="adparaminput"/>
 								<param  name="Al_RecipeTemp" source="RecipeTemp" type="adinteger" direction="adparaminput"/>
-                <param  name="Ac_ReturnCode" source="ReturnCode" type="adcursor" direction="adparamoutput"/>
 							</params>
 							<foreach>
 								<command name="Update Event Row In SQL" enabled="true" rowset="false" begintran="false" connid="SQL">
@@ -64,7 +63,7 @@
 					<foreach>
 						<command name="Send Shop Order Weight To Oracle" enabled="true" rowset="false" begintran="false" connid="ORACLE">
 							<!--This Command calls qdaq$PK_SCHEDULE_IQ_PLC.SetActualWeight to send event to Oracle -->
-							<![CDATA[PK_SCHEDULE_IQ_PLC.SetActualWeight]]>
+							<![CDATA[{call  qdaq$PK_SCHEDULE_IQ_PLC.SetActualWeight (?, ?, ?, ?, ?, ?, ?, ?)}]]>
 							<params>
 								<param  name="Al_Schedule" source="ScheduleID" type="adinteger" direction="adparaminput"/>
 								<param  name="Al_Subset" source="ScheduleSubSetID" type="adinteger" direction="adparaminput"/>
@@ -98,7 +97,7 @@
 					<foreach>
 						<command name="Send Gross Weight To Oracle" enabled="true" rowset="false" begintran="false" connid="ORACLE">
 							<!--This Command calls qdaq$PK_SCHEDULE_IQ_PLC.SetActualGrossWeight to send event to Oracle -->
-							<![CDATA[PK_SCHEDULE_IQ_PLC.SetActualGrossWeight]]>
+							<![CDATA[{call  qdaq$PK_SCHEDULE_IQ_PLC.SetActualGrossWeight (?, ?, ?, ?, ?, ?)}]]>
 							<params>
 								<param  name="Al_Schedule" source="ScheduleID" type="adinteger" direction="adparaminput"/>
 								<param  name="Al_Subset" source="ScheduleSubSetID" type="adinteger" direction="adparaminput"/>
@@ -139,7 +138,7 @@
 						</command>
 						<command name="Get Cost Center Schedule From Oracle" rowset="true" connid="ORACLE" begintran="false" enabled="true">
 							<!--This Command calls qdaq$PK_SCHEDULE_IQ_PLC.GetQueue which retrieves data from Oracle -->
-							<![CDATA[PK_SCHEDULE_IQ_PLC.GetQueue]]>
+							<![CDATA[{call qdaq$PK_SCHEDULE_IQ_PLC.GetQueue (?, ?)}]]>
 							<params>
 								<param name="al_PicsID" source="PICSID" type="adinteger" direction="adparaminput"/>
 								<param name="al_CC" source="CCID" type="adinteger" direction="adparaminput"/>
@@ -178,7 +177,7 @@
 							<foreach>
 								<command name="Get Sequence Step Detail From Oracle" rowset="true" connid="ORACLE" begintran="false" enabled="true">
 									<!--This Command calls qdaq$PK_SCHEDULE_IQ_PLC.GetScheduleStepDetail which retrieves data from Oracle -->
-									<![CDATA[PK_SCHEDULE_IQ_PLC.GetScheduleStepDetail]]>
+									<![CDATA[{call qdaq$PK_SCHEDULE_IQ_PLC.GetScheduleStepDetail (?, ?, ?)}]]>
 									<params>
 										<param name="al_PicsID" source="PICSID" type="adinteger" direction="adparaminput"/>
 										<param name="Al_Schedule" source="ScheduleID" type="adinteger" direction="adparaminput"/>
@@ -207,7 +206,7 @@
 								</command>
 								<command name="Get Schedule Train Detail From Oracle" rowset="true" connid="ORACLE" begintran="false" enabled="true">
 									<!--This Command calls qdaq$PK_SCHEDULE_IQ_PLC.GetTrain which retrieves data from Oracle -->
-									<![CDATA[PK_SCHEDULE_IQ_PLC.GetTrain]]>
+									<![CDATA[{call qdaq$PK_SCHEDULE_IQ_PLC.GetTrain (?, ?, ?)}]]>
 									<params>
 										<param name="al_PicsID" source="PICSID" type="adinteger" direction="adparaminput"/>
 										<param name="Al_Schedule" source="ScheduleID" type="adinteger" direction="adparaminput"/>
@@ -231,7 +230,7 @@
 								</command>
 								<command name="Get Furnace Recipe From Oracle" rowset="true" connid="ORACLE" begintran="false" enabled="true">
 									<!--This Command calls qdaq$PK_SCHEDULE_IQ_PLC.GetRecipe which retrieves data from Oracle -->
-									<![CDATA[PK_SCHEDULE_IQ_PLC.GetRecipe]]>
+									<![CDATA[{call qdaq$PK_SCHEDULE_IQ_PLC.GetRecipe (?, ?, ?, ?, ?)}]]>
 									<params>
 										<param name="al_PicsID" source="PICSID" type="adinteger" direction="adparaminput"/>
 										<param name="Al_Cost_center_id" source="CCID" type="adinteger" direction="adparaminput"/>
