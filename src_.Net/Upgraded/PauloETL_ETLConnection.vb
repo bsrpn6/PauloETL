@@ -7,6 +7,7 @@ Imports System.Data.Common
 Imports System.Xml
 Imports UpgradeHelpers.Helpers
 Imports System.Data.OracleClient
+Imports Oracle.ManagedDataAccess.Client
 
 Public Class ETLConnection
     'Constant for Module Name Used In Error Functions

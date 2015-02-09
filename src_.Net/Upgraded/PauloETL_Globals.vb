@@ -69,7 +69,7 @@ Module Globals
 			Case "adsingle"
 				vReturn = DbType.Single
 			Case "addouble"
-				vReturn = DbType.Double
+                vReturn = DbType.Double
 
         End Select
 		Return vReturn

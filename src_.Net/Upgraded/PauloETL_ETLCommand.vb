@@ -7,7 +7,7 @@ Imports System.Diagnostics
 Imports System.Xml
 Imports UpgradeHelpers.Helpers
 Imports Newtonsoft.Json
-Imports System.Data.OracleClient
+Imports Oracle.ManagedDataAccess.Client
 
 Public Class ETLCommand
     'Constant for Module Name Used In Error Functions
@@ -236,7 +236,7 @@ LocalErrHandler:
                 If msConnID = "ORACLE" And sParamType = "adcursor" Then
                     Dim oracleParam As OracleParameter
                     oracleParam = TempParameter
-                    oracleParam.OracleType = OracleType.Cursor
+                    oracleParam.OracleDbType = OracleDbType.RefCursor
                 Else
                     TempParameter.DbType = GetADODataType(sParamType)
                 End If

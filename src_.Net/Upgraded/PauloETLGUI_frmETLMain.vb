@@ -100,13 +100,13 @@ Partial Friend Class frmETLMain
 	Private Sub cmdExecuteJob_Click(ByVal eventSender As Object, ByVal eventArgs As EventArgs) Handles cmdExecuteJob.Click
 		Dim sError As String = ""
 
-		If lvwJobs.FocusedItem.Index + 1 < 1 Then
-			MessageBox.Show("Must Select job", Me.Text, MessageBoxButtons.OK, MessageBoxIcon.Exclamation)
-		Else
-			If moETLControl.ExecuteJob(Me.JobID) > 0 Then
-				MessageBox.Show("Job Completed", Me.Text, MessageBoxButtons.OK, MessageBoxIcon.Information)
-			End If
-		End If
+        If lvwJobs.FocusedItem.Index + 1 < 1 Then
+            MessageBox.Show("Must Select job", Me.Text, MessageBoxButtons.OK, MessageBoxIcon.Exclamation)
+        Else
+            If moETLControl.ExecuteJob(Me.JobID) > 0 Then
+                MessageBox.Show("Job Completed", Me.Text, MessageBoxButtons.OK, MessageBoxIcon.Information)
+            End If
+        End If
 	End Sub
 
 	Private Sub cmdExecuteMain_Click(ByVal eventSender As Object, ByVal eventArgs As EventArgs) Handles cmdExecuteMain.Click

@@ -4,7 +4,7 @@
 <root xsi:noNamespaceSchemaLocation="ETLSchema.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
   <connections>
     <connection id="SQL" connstring="Provider='sqloledb';Data Source=STLFTTMA;Initial Catalog=PauloWIP;Persist Security Info=True;User ID=process;Password='process'" name="Paulo Site WIP Database" uid="process" pwd="process"/>
-    <connection id="ORACLE" connstring="Data Source=STLDAQCR;Persist Security Info=True;User ID=equipdaq;Password=qdaq;Unicode=True" name="Paulo Oracle PICS Database" uid="equipdaq" pwd="qdaq"/>
+    <connection id="ORACLE" connstring="Data Source=STLDAQCR;Persist Security Info=True;User ID=equipdaq;Password=qdaq" name="Paulo Oracle PICS Database" uid="equipdaq" pwd="qdaq"/>
   </connections>
   <jobs>
     <job id="Main" name="Upload Events and Download Schedule/Shop Order Information From Oracle">
@@ -24,7 +24,7 @@
           <foreach>
             <command name="Send Equipment Event To Oracle" enabled="true" rowset="true" begintran="false" connid="ORACLE">
               <!--This Command calls equipdaq.PK_SCHEDULE_IQ_PLC.GetQueue which retrieves data from Oracle -->
-              <![CDATA[PK_SCHEDULE_IQ_PLC.SendEquipmentEvent(:Al_PicsID, :Al_Schedule, :Al_Subset, :Al_StepOrder, :Al_Detail, :Al_CC, :Al_Equiment, :Adt_Timestamp, :Al_EventCode, :Al_Activity, :Al_RecipeType, :Al_RecipeTime, :Al_RecipeType, :Ac_ReturnCode)]]>
+              <![CDATA[PK_SCHEDULE_IQ_PLC.SendEquipmentEvent]]>
               <params>
                 <param  name="Al_PicsID" source="PICSID" type="adinteger" direction="adparaminput"/>
                 <param  name="Al_Schedule" source="ScheduleID" type="adinteger" direction="adparaminput"/>
@@ -32,7 +32,7 @@
                 <param  name="Al_StepOrder" source="ScheduleDetailStepNum" type="adinteger" direction="adparaminput"/>
                 <param  name="Al_Detail" source="ScheduleDetailSeq" type="adinteger" direction="adparaminput"/>
                 <param  name="Al_CC" source="CCID" type="adinteger" direction="adparaminput"/>
-                <param  name="Al_Equiment" source="EquipID" type="adinteger" direction="adparaminput"/>
+                <param  name="Al_Equipment" source="EquipID" type="adinteger" direction="adparaminput"/>
                 <param  name="Adt_Timestamp" source="EventTimeStamp" type="addate" direction="adparaminput"/>
                 <param  name="Al_EventCode" source="OracleEventCode" type="adinteger" direction="adparaminput"/>
                 <param  name="Al_Activity" source="ActivityZone" type="adinteger" direction="adparaminput"/>
@@ -46,8 +46,6 @@
                   <!--This Command calls oiBHTEquipmentEventSent which Updates Row in SQL Server to Mark Success/Failure -->
                   <![CDATA[EXEC dbo.oiBHTEquipmentEventSent ?, ?]]>
                   <params>
-                    <param name="OI_EventID" source=".OI_EventID" type="adinteger" direction="adparaminput"/>
-                    <param name="OracleReturnCode" source="RETURN_CODE" type="adinteger" direction="adparaminput"/>
                   </params>
                   <foreach/>
                 </command>
@@ -143,6 +141,7 @@
               <params>
                 <param name="al_PicsID" source="PICSID" type="adinteger" direction="adparaminput"/>
                 <param name="al_CC" source="CCID" type="adinteger" direction="adparaminput"/>
+                <param  name="Ac_List" source="List" type="adcursor" direction="adparamoutput"/>
               </params>
               <foreach>
                 <command name="Load Schedule Entry Into SQL" rowset="false" connid="SQL" begintran="false" enabled="true">
@@ -183,6 +182,7 @@
                     <param name="al_PicsID" source="PICSID" type="adinteger" direction="adparaminput"/>
                     <param name="Al_Schedule" source="ScheduleID" type="adinteger" direction="adparaminput"/>
                     <param name="Al_Subset" source="ScheduleSubsetID" type="adinteger" direction="adparaminput"/>
+                    <param  name="Ac_ReturnCode" source="ReturnCode" type="adcursor" direction="adparamoutput"/>
                   </params>
                   <foreach>
                     <command name="Load Sequence Detail Entry Into SQL" rowset="false" connid="SQL" begintran="false" enabled="true">
@@ -212,6 +212,7 @@
                     <param name="al_PicsID" source="PICSID" type="adinteger" direction="adparaminput"/>
                     <param name="Al_Schedule" source="ScheduleID" type="adinteger" direction="adparaminput"/>
                     <param name="Al_Subset" source="ScheduleSubsetID" type="adinteger" direction="adparaminput"/>
+                    <param  name="Ac_ReturnCode" source="ReturnCode" type="adcursor" direction="adparamoutput"/>
                   </params>
                   <foreach>
                     <command name="Load Schedule Train Detail Entry Into SQL" rowset="false" connid="SQL" begintran="false" enabled="true">
@@ -238,6 +239,7 @@
                     <param name="Al_Equipment_ID" source="EquipID" type="adinteger" direction="adparaminput"/>
                     <param name="Al_Schedule" source="ScheduleID" type="adinteger" direction="adparaminput"/>
                     <param name="Al_Subset" source="ScheduleSubsetID" type="adinteger" direction="adparaminput"/>
+                    <param  name="Ac_ReturnCode" source="ReturnCode" type="adcursor" direction="adparamoutput"/>
                   </params>
                   <foreach>
                     <command name="Load Furnace Recipe Segment Entry Into SQL" rowset="false" connid="SQL" begintran="false" enabled="true">
