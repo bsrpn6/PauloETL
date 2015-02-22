@@ -6,7 +6,7 @@ Imports System.Data.Common
 Imports System.Diagnostics
 Imports System.Xml
 Imports UpgradeHelpers.Helpers
-Imports Newtonsoft.Json
+'Imports Newtonsoft.Json
 Imports Oracle.ManagedDataAccess.Client
 
 Public Class ETLCommand
@@ -44,10 +44,10 @@ Public Class ETLCommand
             GoTo LocalExit
         End If
 
-        Debug.WriteLine("Executing " & msCmdName & moCmd.CommandText)
+        'Debug.WriteLine("Executing " & msCmdName & moCmd.CommandText)
 
-        Dim s As Newtonsoft.Json.JsonSerializerSettings = New Newtonsoft.Json.JsonSerializerSettings
-        s.ReferenceLoopHandling = ReferenceLoopHandling.Ignore
+        'Dim s As Newtonsoft.Json.JsonSerializerSettings = New Newtonsoft.Json.JsonSerializerSettings
+        's.ReferenceLoopHandling = ReferenceLoopHandling.Ignore
 
         ' If moParentCommand IsNot Nothing Then
         'Dim reader As DbDataReader = moParentCommand.dataReader
@@ -92,25 +92,24 @@ Public Class ETLCommand
 
             Next I
 
-            Debug.WriteLine("The Params are:")
-            Debug.WriteLine(sParams)
+            'Debug.WriteLine("The Params are: " & sParams)
 
         End If
 
         If mbRowSet Then
 
-            Debug.WriteLine("Calling moCmd START " + moCmd.CommandText)
+            'Debug.WriteLine("Calling moCmd START " + moCmd.CommandText)
             dataReader = moCmd.ExecuteReader()
 
             If (dataReader.HasRows) And (moForEachDoCommand.Count > 0) Then
-                Dim i As Int16 = 1
+                'Dim i As Int16 = 1
                 Dim saveSrcCommand As ETLCommand
 
                 Do While dataReader.Read()
-                    Debug.WriteLine("moRs i " + i.ToString())
-                    i += 1
+                    'Debug.WriteLine("moRs i " + i.ToString())
+                    'i += 1
 
-                    Dim j As Int16 = 1
+                    'Dim j As Int16 = 1
                     Dim oChildCommand As ETLCommand
                     Dim cmd As DbCommand
                     Dim e As IDictionaryEnumerator
@@ -119,8 +118,8 @@ Public Class ETLCommand
 
                     ' For Each oChildCommandEntry As OrderedDictionary In moForEachDoCommand.GetEnumerator()
                     While e.MoveNext()
-                        Debug.WriteLine("moForEachDoCommand j " + j.ToString())
-                        j += 1
+                        'Debug.WriteLine("moForEachDoCommand j " + j.ToString())
+                        'j += 1
                         oChildCommand = e.Value
                         ' If saveSrcCommand Is Nothing Then
                         '    saveSrcCommand = oChildCommand.moParentCommand
@@ -129,9 +128,9 @@ Public Class ETLCommand
                         'oChildCommand.moParentCommand = saveSrcCommand
                         oChildCommand.moParentCommand = Me
 
-                        Debug.WriteLine("oChildComand START CALL EXEC " + oChildCommand.CmdName)
+                        'Debug.WriteLine("oChildComand START CALL EXEC " + oChildCommand.CmdName)
                         bReturn = oChildCommand.Execute(oETLControl, ErrorMessage)
-                        Debug.WriteLine("oChildCommand END CALL EXEC " + oChildCommand.CmdName)
+                        'Debug.WriteLine("oChildCommand END CALL EXEC " + oChildCommand.CmdName)
                         If Not bReturn Then
                             GoTo LocalExit
                         End If
@@ -177,7 +176,7 @@ LocalErrHandler:
             GoTo LocalExit
         End If
 
-        Debug.WriteLine("Loading Command From XML: " & msCmdName)
+        'Debug.WriteLine("Loading Command From XML: " & msCmdName)
         mbRowSet = ReflectionHelper.GetPrimitiveValue(Of Boolean)(oNode.GetAttribute("rowset"))
         mbBeginTran = ReflectionHelper.GetPrimitiveValue(Of Boolean)(oNode.GetAttribute("begintran"))
         msConnID = ReflectionHelper.GetPrimitiveValue(Of String)(oNode.GetAttribute("connid"))
