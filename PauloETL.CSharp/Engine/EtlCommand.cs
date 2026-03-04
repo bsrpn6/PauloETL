@@ -12,16 +12,24 @@ namespace PauloETL.Engine;
 
 /// <summary>
 /// Executes a single ETL command with optional foreach iteration over child commands.
-/// This is the core execution unit — mirrors the VB6 ETLCommand class.
+/// This is the core execution unit — mirrors the VB.NET production ETLCommand class.
 ///
 /// Execution flow:
 ///   1. Resolve parameters from parent command's current row (if any)
 ///   2. Execute the SQL command
 ///   3. If rowset=true and has foreach children:
-///      - Load results into DataTable (disconnected, like VB6's adUseClient + adOpenStatic)
-///      - For each row, execute all child commands sequentially
+///      - Load results into DataTable (disconnected from server)
+///      - For each row, re-set parent on children, then execute all children sequentially
 ///   4. If rowset=false:
 ///      - Execute as non-query
+///
+/// NOTE: The VB.NET production code uses DbDataReader (connected, streaming).
+/// We deliberately use DataTable (disconnected) instead because:
+///   - Avoids MARS (Multiple Active Result Sets) dependency on SQL Server
+///   - Avoids connection contention on Oracle (which doesn't support MARS)
+///   - Matches the original VB6 intent (adUseClient + adOpenStatic = disconnected recordset)
+///   - The VB.NET DataReader approach has a latent resource leak (readers never closed)
+/// The logical behavior is identical — same data, same iteration order, same parameters.
 /// </summary>
 public sealed class EtlCommand
 {
@@ -184,6 +192,11 @@ public sealed class EtlCommand
 
             foreach (var child in _forEachChildren)
             {
+                // Re-set parent reference at runtime, matching VB.NET production behavior:
+                //   oChildCommand.moParentCommand = Me
+                // This ensures children always reference the correct executing parent.
+                child.SetParent(this);
+
                 if (!await child.ExecuteAsync(dryRun, ct))
                 {
                     _log.Error("Child command '{ChildName}' failed at row {RowNum}/{RowCount}",
@@ -209,11 +222,15 @@ public sealed class EtlCommand
 
     /// <summary>
     /// Resolves parameter values from parent command's current row or output parameters.
-    /// Mirrors the parameter resolution logic in ETLCommand.Execute() lines 51-66:
+    /// Mirrors the parameter resolution logic in the VB.NET production ETLCommand.Execute():
     ///
     ///   - Plain "FieldName":  reads from parent's current DataRow[FieldName]
     ///   - ".FieldName":       dots walk up the parent chain (each dot = one level up)
     ///   - "@ParamName":       reads from parent's DbCommand output parameter value
+    ///
+    /// NOTE: The VB.NET production code ONLY resolves Input-direction parameters from the
+    /// parent data source. Output, InputOutput, and ReturnValue parameters are left unset
+    /// (the database provider populates them during execution). We match this behavior.
     /// </summary>
     private void ResolveParameters()
     {
@@ -235,7 +252,6 @@ public sealed class EtlCommand
                 source = source[1..];
             }
 
-            object? value;
             if (source.StartsWith('@'))
             {
                 // Read from parent command's output parameter
@@ -244,10 +260,14 @@ public sealed class EtlCommand
                     .FirstOrDefault(p => p.ParameterName == paramName)
                     ?? throw new InvalidOperationException(
                         $"Output parameter '{paramName}' not found on command '{sourceCommand.Name}'");
-                value = srcParam.Value;
+                _dbCommand!.Parameters[i].Value = srcParam.Value;
             }
             else
             {
+                // VB.NET production: only resolve Input-direction parameters from parent data
+                if (_dbCommand!.Parameters[i].Direction != ParameterDirection.Input)
+                    continue;
+
                 // Read from parent command's current DataRow
                 var row = sourceCommand.CurrentRow
                     ?? throw new InvalidOperationException(
@@ -258,10 +278,8 @@ public sealed class EtlCommand
                         $"Column '{source}' not found in result set of command '{sourceCommand.Name}'. " +
                         $"Available columns: {string.Join(", ", row.Table.Columns.Cast<DataColumn>().Select(c => c.ColumnName))}");
 
-                value = row[source];
+                _dbCommand.Parameters[i].Value = row[source] is DBNull ? DBNull.Value : row[source];
             }
-
-            _dbCommand!.Parameters[i].Value = value == DBNull.Value ? DBNull.Value : value;
         }
     }
 
@@ -269,16 +287,29 @@ public sealed class EtlCommand
     {
         var cmd = _connection.CreateCommand();
         var sqlText = _config.SqlText;
+        var hasParameters = _config.Parameters.Count > 0;
 
-        // Detect Oracle stored procedure call syntax: {call pkg.proc(?, ?, ...)}
-        // ODP.NET doesn't support ODBC escape syntax — convert to CommandType.StoredProcedure
-        if (_connection.IsOracle && IsOdbcCallSyntax(sqlText))
+        if (_connection.IsOracle)
         {
-            var (procName, paramCount) = ParseOdbcCall(sqlText);
-            cmd.CommandText = procName;
-            cmd.CommandType = CommandType.StoredProcedure;
+            // VB.NET production logic:
+            //   - Extract procedure name from ODBC escape syntax: {call pkg.proc(?, ?)}
+            //   - Set CommandType.StoredProcedure if there are parameters
+            //   - Plain SQL (no params, e.g., SET ROLE) stays as CommandType.Text
+            if (IsOdbcCallSyntax(sqlText))
+            {
+                cmd.CommandText = ParseOdbcCallProcName(sqlText);
+            }
+            else
+            {
+                cmd.CommandText = sqlText;
+            }
+
+            if (hasParameters)
+            {
+                cmd.CommandType = CommandType.StoredProcedure;
+            }
         }
-        else if (!_connection.IsOracle && sqlText.StartsWith("EXEC ", StringComparison.OrdinalIgnoreCase))
+        else if (sqlText.StartsWith("EXEC ", StringComparison.OrdinalIgnoreCase))
         {
             // SQL Server: convert "EXEC dbo.spName ?, ?" to stored procedure call
             var parts = sqlText.Split(' ', StringSplitOptions.RemoveEmptyEntries);
@@ -305,10 +336,21 @@ public sealed class EtlCommand
         {
             var dbParam = cmd.CreateParameter();
             dbParam.ParameterName = paramConfig.Name;
-            dbParam.DbType = AdoTypeMapper.MapDataType(paramConfig.Type);
             dbParam.Direction = AdoTypeMapper.MapDirection(paramConfig.Direction);
+
+            // VB.NET production: Oracle RefCursor params use OracleDbType directly
+            if (_connection.IsOracle && AdoTypeMapper.IsRefCursor(paramConfig.Type))
+            {
+                ((OracleParameter)dbParam).OracleDbType = OracleDbType.RefCursor;
+            }
+            else
+            {
+                dbParam.DbType = AdoTypeMapper.MapDataType(paramConfig.Type);
+            }
+
             if (paramConfig.Size.HasValue)
                 dbParam.Size = paramConfig.Size.Value;
+
             cmd.Parameters.Add(dbParam);
         }
 
@@ -321,23 +363,16 @@ public sealed class EtlCommand
     }
 
     /// <summary>
-    /// Parses ODBC call escape syntax: "{call pkg.proc (?, ?, ?)}" into procedure name and param count.
+    /// Parses ODBC call escape syntax "{call pkg.proc (?, ?, ?)}" and returns just the procedure name.
     /// </summary>
-    private static (string ProcName, int ParamCount) ParseOdbcCall(string sql)
+    private static string ParseOdbcCallProcName(string sql)
     {
-        var match = Regex.Match(sql, @"\{\s*call\s+([\w$.]+)\s*\(([^)]*)\)\s*\}",
-            RegexOptions.IgnoreCase);
+        var match = Regex.Match(sql, @"\{\s*call\s+([\w$.]+)", RegexOptions.IgnoreCase);
 
         if (!match.Success)
             throw new InvalidOperationException($"Cannot parse ODBC call syntax: '{sql}'");
 
-        var procName = match.Groups[1].Value;
-        var paramList = match.Groups[2].Value.Trim();
-        var paramCount = string.IsNullOrEmpty(paramList)
-            ? 0
-            : paramList.Split(',').Length;
-
-        return (procName, paramCount);
+        return match.Groups[1].Value;
     }
 
     private DbDataAdapter CreateDataAdapter(DbCommand cmd)
