@@ -99,21 +99,30 @@ public sealed class EtlConnection : IAsyncDisposable
 
     private DbConnection CreateConnection()
     {
-        var connString = TransformConnectionString(_config.ConnString, _config.Uid, _config.Pwd);
+        var connString = BuildConnectionString();
+
+        // Log the transformed connection string with password masked for diagnostics
+        var maskedConnString = System.Text.RegularExpressions.Regex.Replace(
+            connString,
+            @"Password\s*=\s*[^;]+",
+            "Password=***",
+            System.Text.RegularExpressions.RegexOptions.IgnoreCase);
+        _log.Debug("Transformed connection string for {ConnectionId}: {ConnString}", Id, maskedConnString);
 
         if (IsOracle)
-        {
-            _log.Debug("Creating OracleConnection for {ConnectionId}", Id);
             return new OracleConnection(connString);
-        }
 
-        _log.Debug("Creating SqlConnection for {ConnectionId}", Id);
         return new SqlConnection(connString);
     }
 
     /// <summary>
     /// Transforms legacy OLEDB connection strings to ADO.NET format.
     /// Strips 'Provider=xxx;' and adds User ID / Password if needed.
+    ///
+    /// SQL Server: Microsoft.Data.SqlClient v5+ defaults to Encrypt=Mandatory.
+    /// Legacy internal servers typically don't have trusted TLS certificates,
+    /// so we add Encrypt=false unless the connection string already specifies it.
+    /// This matches the original OLEDB behavior (no encryption by default).
     /// </summary>
     private static string TransformConnectionString(string oleDbConnString, string uid, string pwd)
     {
@@ -149,6 +158,32 @@ public sealed class EtlConnection : IAsyncDisposable
         cleaned += $"User ID={uid};Password={pwd};";
 
         return cleaned;
+    }
+
+    /// <summary>
+    /// Builds the final connection string with provider-specific defaults.
+    /// SQL Server: adds Encrypt=false to match legacy OLEDB behavior (no TLS).
+    /// </summary>
+    private string BuildConnectionString()
+    {
+        var connString = TransformConnectionString(_config.ConnString, _config.Uid, _config.Pwd);
+
+        if (!IsOracle)
+        {
+            // Microsoft.Data.SqlClient v5+ defaults to Encrypt=Mandatory.
+            // Legacy internal SQL Servers don't have trusted certificates,
+            // so we match the original OLEDB behavior (unencrypted) unless
+            // the connection string already specifies encryption settings.
+            var upper = connString.ToUpperInvariant();
+            if (!upper.Contains("ENCRYPT=") && !upper.Contains("TRUSTSERVERCERTIFICATE="))
+            {
+                connString += "Encrypt=false;";
+                _log.Debug("Added Encrypt=false for SQL Server connection {ConnectionId} " +
+                    "(matching legacy OLEDB behavior)", Id);
+            }
+        }
+
+        return connString;
     }
 
     private static bool DetectOracle(string connString)
