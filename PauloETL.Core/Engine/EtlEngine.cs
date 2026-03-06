@@ -11,7 +11,7 @@ namespace PauloETL.Engine;
 /// Mirrors the VB6 ETLControl class (LoadXMLConfig, ExecuteJob, ExecuteJobStep).
 ///
 /// Execution is fully sequential (async I/O, but one step at a time) matching
-/// the original VB6 behavior. See plan.md for the async feasibility analysis.
+/// the original VB6 behavior.
 /// </summary>
 public sealed class EtlEngine : IAsyncDisposable
 {
@@ -20,6 +20,21 @@ public sealed class EtlEngine : IAsyncDisposable
     private bool _loaded;
 
     public bool DryRun { get; set; }
+
+    /// <summary>
+    /// Gets the loaded connections. Only available after LoadConfig() has been called.
+    /// </summary>
+    public IReadOnlyDictionary<string, EtlConnection> Connections => _connections;
+
+    /// <summary>
+    /// Gets the loaded jobs. Only available after LoadConfig() has been called.
+    /// </summary>
+    public IReadOnlyList<JobConfig> Jobs => _jobs;
+
+    /// <summary>
+    /// Whether the configuration has been loaded.
+    /// </summary>
+    public bool IsLoaded => _loaded;
 
     /// <summary>
     /// Loads the XML configuration file and initializes connection wrappers.
@@ -39,6 +54,25 @@ public sealed class EtlEngine : IAsyncDisposable
 
         Log.Information("Configuration loaded: {ConnectionCount} connections, {JobCount} jobs",
             _connections.Count, _jobs.Count);
+    }
+
+    /// <summary>
+    /// Tests a connection by opening it. Returns null on success, error message on failure.
+    /// </summary>
+    public async Task<string?> TestConnectionAsync(string connectionId, CancellationToken ct = default)
+    {
+        if (!_connections.TryGetValue(connectionId, out var connection))
+            return $"Connection '{connectionId}' not found";
+
+        try
+        {
+            await connection.OpenAsync(ct);
+            return null; // success
+        }
+        catch (Exception ex)
+        {
+            return ex.Message;
+        }
     }
 
     /// <summary>
@@ -81,9 +115,33 @@ public sealed class EtlEngine : IAsyncDisposable
     }
 
     /// <summary>
-    /// Executes a single job step by building and running its command tree.
+    /// Executes a single step by name within a job.
     /// Mirrors ETLControl.ExecuteJobStep().
     /// </summary>
+    public async Task<bool> ExecuteStepAsync(string jobId, string stepName, CancellationToken ct = default)
+    {
+        if (!_loaded)
+            throw new InvalidOperationException("Must call LoadConfig before executing a step");
+
+        var job = _jobs.FirstOrDefault(j => j.Id.Equals(jobId, StringComparison.OrdinalIgnoreCase))
+            ?? throw new InvalidOperationException($"Job '{jobId}' not found in configuration");
+
+        var stepIndex = -1;
+        for (int i = 0; i < job.Steps.Count; i++)
+        {
+            if (job.Steps[i].Name.Equals(stepName, StringComparison.OrdinalIgnoreCase))
+            {
+                stepIndex = i;
+                break;
+            }
+        }
+
+        if (stepIndex < 0)
+            throw new InvalidOperationException($"Step '{stepName}' not found in job '{jobId}'");
+
+        return await ExecuteStepAsync(jobId, job.Steps[stepIndex], stepIndex + 1, job.Steps.Count, ct);
+    }
+
     private async Task<bool> ExecuteStepAsync(
         string jobId, StepConfig step, int stepNum, int stepCount, CancellationToken ct)
     {

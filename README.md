@@ -152,40 +152,52 @@ PauloETL is run on a schedule via Windows Task Scheduler, typically every few mi
 
 ```
 PauloETL/
+├── PauloETL.sln              # Visual Studio solution
 ├── PauloETL.xml              # Active ETL job configuration
 ├── ETLSchema.xsd             # XML schema for config validation
 ├── ETLSegmentEventsStep.xml  # Segment events step definition (supplemental)
 │
-├── src/                      # Original VB6 source code
+├── src/                      # Original VB6 source code (reference)
 │   ├── PauloETL_ETLControl.cls
 │   ├── PauloETL_ETLCommand.cls
-│   ├── PauloETL_ETLCommands.cls
-│   ├── PauloETL_ETLConnection.cls
 │   ├── PauloETL_ETLConnections.cls
+│   ├── PauloETL_ETLConnection.cls
 │   ├── PauloETL_Globals.bas
-│   ├── PauloETL_frmETLCommand.frm
-│   ├── PauloETL_frmSingleStep.frm
 │   ├── PauloETLGUI_frmETLMain.frm
 │   ├── PauloETLGUI_frmJobView.frm
 │   └── *.vbp / *.vbw / *.vbg   # VB6 project files
 │
-└── PauloETL.CSharp/          # Modern C# rewrite (.NET 8+)
-    ├── Program.cs             # Entry point, argument parsing, logging setup
-    ├── Configuration/
-    │   ├── AdoTypeMapper.cs   # XML type strings -> .NET DbType/ParameterDirection
-    │   └── XmlConfigParser.cs # Parses PauloETL.xml with XSD validation
-    ├── Connections/
-    │   └── EtlConnection.cs   # Wraps DbConnection (auto-detects SQL Server vs Oracle)
-    ├── Engine/
-    │   ├── EtlEngine.cs       # Main orchestrator — loads config, runs jobs
-    │   └── EtlCommand.cs      # Executes commands with foreach/parameter resolution
-    └── Models/
-        ├── ConnectionConfig.cs
-        ├── JobConfig.cs
-        ├── StepConfig.cs
-        ├── CommandConfig.cs
-        └── ParamConfig.cs
+├── PauloETL.Core/            # Shared class library (.NET 8)
+│   ├── Configuration/
+│   │   ├── AdoTypeMapper.cs   # XML type strings -> .NET DbType/ParameterDirection
+│   │   └── XmlConfigParser.cs # Parses PauloETL.xml with XSD validation
+│   ├── Connections/
+│   │   └── EtlConnection.cs   # Wraps DbConnection (auto-detects SQL Server vs Oracle)
+│   ├── Engine/
+│   │   ├── EtlEngine.cs       # Main orchestrator — loads config, runs jobs
+│   │   └── EtlCommand.cs      # Executes commands with foreach/parameter resolution
+│   └── Models/
+│       ├── ConnectionConfig.cs, JobConfig.cs, StepConfig.cs
+│       ├── CommandConfig.cs, ParamConfig.cs
+│
+├── PauloETL.Console/         # Console runner (.NET 8)
+│   └── Program.cs             # Entry point, argument parsing, Serilog setup
+│
+└── PauloETL.Gui/             # WinForms GUI (.NET 8)
+    ├── Program.cs             # WinForms entry point
+    ├── MainForm.cs            # Load XML, view connections/jobs, test & execute
+    └── JobDetailForm.cs       # View steps, execute individual steps
 ```
+
+### Building
+
+```
+dotnet build PauloETL.sln
+```
+
+This produces two executables:
+- `PauloETLExecute` — headless console runner (scheduled via Task Scheduler)
+- `PauloETLGui` — interactive GUI for testing and debugging
 
 ## History
 
@@ -193,7 +205,7 @@ PauloETL was originally written in **VB6** circa 2010 as a COM DLL (`PauloETL.dl
 
 An automated port to **VB.NET** was attempted using the Visual Studio Upgrade Wizard and `UpgradeHelpers` libraries. That port introduced several behavioral changes (see `ASSESSMENT.md` for a detailed comparison), but is the version currently running in production.
 
-The **C# rewrite** in `PauloETL.CSharp/` is a clean reimplementation targeting modern .NET. It preserves the original XML configuration format and the VB6 execution logic, while adding:
+The **C# rewrite** is a clean reimplementation targeting .NET 8. It is structured as three projects sharing a common `PauloETL.Core` library. It preserves the original XML configuration format and the VB6 execution logic, while adding:
 
 - **Structured logging** via Serilog (console + rolling file)
 - **Retry policies** via Polly for transient database failures
@@ -201,6 +213,7 @@ The **C# rewrite** in `PauloETL.CSharp/` is a clean reimplementation targeting m
 - **Managed Oracle driver** (ODP.NET Core) — no COM/OLEDB dependency
 - **XSD validation** of the configuration file at load time
 - **Proper resource management** with `IAsyncDisposable`
+- **WinForms GUI** for interactive testing (mirrors the original VB6 GUI)
 
 ## Dependencies (C# Version)
 
