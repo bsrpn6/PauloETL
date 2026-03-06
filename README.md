@@ -120,10 +120,10 @@ The configuration file (`PauloETL.xml`) defines connections, jobs, steps, and co
 | `adparaminputoutput` | Input/output parameter |
 | `adparamreturnvalue` | Return value |
 
-## Usage
+## Command-Line Reference
 
 ```
-PauloETLExecute -Job:Main -XML:C:\path\to\PauloETL.xml [--dry-run] [--log-dir:C:\logs] [--verbose]
+PauloETLExecute -Job:<JobID> -XML:<FilePath> [--dry-run] [--log-dir:<Path>] [--verbose]
 ```
 
 | Argument | Required | Description |
@@ -189,15 +189,55 @@ PauloETL/
     └── JobDetailForm.cs       # View steps, execute individual steps
 ```
 
+### Prerequisites
+
+- [.NET 8 SDK](https://dotnet.microsoft.com/download/dotnet/8.0) or later
+- **Visual Studio 2022** (17.8+) with the ".NET desktop development" workload, or **VS Code** with the [C# Dev Kit](https://marketplace.visualstudio.com/items?itemName=ms-dotnettools.csdevkit) extension
+
 ### Building
+
+**Visual Studio:** Open `PauloETL.sln`, select Debug or Release, and build the solution (Ctrl+Shift+B). Set the startup project to `PauloETL.Console` for the headless runner or `PauloETL.Gui` for the interactive GUI.
+
+**Command line / VS Code:**
 
 ```
 dotnet build PauloETL.sln
 ```
 
 This produces two executables:
-- `PauloETLExecute` — headless console runner (scheduled via Task Scheduler)
-- `PauloETLGui` — interactive GUI for testing and debugging
+
+| Output | Project | Description |
+|---|---|---|
+| `PauloETLExecute` | PauloETL.Console | Headless console runner (scheduled via Task Scheduler) |
+| `PauloETLGui` | PauloETL.Gui | Interactive WinForms GUI for testing and debugging |
+
+> **Note:** The GUI project targets `net8.0-windows` (WinForms). On macOS/Linux the GUI is silently skipped and only the Core library and Console runner are built.
+
+### Running
+
+**Console runner:**
+
+```
+PauloETLExecute -Job:Main -XML:C:\VB\PauloETL\PauloETL.xml
+```
+
+**GUI:** Launch `PauloETLGui.exe` (or set `PauloETL.Gui` as the startup project in Visual Studio and press F5). The main window lets you load the XML configuration, browse connections and jobs, test connections, and execute jobs interactively.
+
+### Testing with Dry Run
+
+Before running against production databases, use the `--dry-run` flag to validate configuration and parameter resolution without executing any mutation (child) commands:
+
+```
+PauloETLExecute -Job:Main -XML:C:\VB\PauloETL\PauloETL.xml --dry-run --verbose
+```
+
+In dry-run mode:
+- All parent/rowset commands execute normally (read-only queries)
+- Child commands (inserts, updates, stored procedure calls) are **logged with their resolved parameter values but not executed**
+- The log output shows exactly what would run, making it safe to verify against production data
+- Combine with `--verbose` to see debug-level detail including individual parameter bindings
+
+Dry-run logs are written to a separate file (`PauloETL_DryRun_<date>.log`) to keep them distinct from production runs. Use `--log-dir:C:\logs` to control where log files are written.
 
 ## History
 
