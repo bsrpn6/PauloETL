@@ -167,7 +167,7 @@ PauloETL/
 │   ├── PauloETLGUI_frmJobView.frm
 │   └── *.vbp / *.vbw / *.vbg   # VB6 project files
 │
-├── PauloETL.Core/            # Shared class library (.NET 8)
+├── PauloETL.Core/            # Shared class library (.NET 10)
 │   ├── Configuration/
 │   │   ├── AdoTypeMapper.cs   # XML type strings -> .NET DbType/ParameterDirection
 │   │   └── XmlConfigParser.cs # Parses PauloETL.xml with XSD validation
@@ -180,10 +180,10 @@ PauloETL/
 │       ├── ConnectionConfig.cs, JobConfig.cs, StepConfig.cs
 │       ├── CommandConfig.cs, ParamConfig.cs
 │
-├── PauloETL.Console/         # Console runner (.NET 8)
+├── PauloETL.Console/         # Console runner (.NET 10)
 │   └── Program.cs             # Entry point, argument parsing, Serilog setup
 │
-└── PauloETL.Gui/             # WinForms GUI (.NET 8)
+└── PauloETL.Gui/             # WinForms GUI (.NET 10)
     ├── Program.cs             # WinForms entry point
     ├── MainForm.cs            # Load XML, view connections/jobs, test & execute
     └── JobDetailForm.cs       # View steps, execute individual steps
@@ -191,7 +191,7 @@ PauloETL/
 
 ### Prerequisites
 
-- [.NET 8 SDK](https://dotnet.microsoft.com/download/dotnet/8.0) or later
+- [.NET 10 SDK](https://dotnet.microsoft.com/download/dotnet/10.0)
 - **Visual Studio 2022** (17.8+) with the ".NET desktop development" workload, or **VS Code** with the [C# Dev Kit](https://marketplace.visualstudio.com/items?itemName=ms-dotnettools.csdevkit) extension
 
 ### Building
@@ -211,7 +211,7 @@ This produces two executables:
 | `PauloETLExecute` | PauloETL.Console | Headless console runner (scheduled via Task Scheduler) |
 | `PauloETLGui` | PauloETL.Gui | Interactive WinForms GUI for testing and debugging |
 
-> **Note:** The GUI project targets `net8.0-windows` (WinForms). On macOS/Linux the GUI is silently skipped and only the Core library and Console runner are built.
+> **Note:** The GUI project targets `net10.0-windows` (WinForms). On macOS/Linux the GUI is silently skipped and only the Core library and Console runner are built.
 
 ### Running
 
@@ -245,7 +245,7 @@ PauloETL was originally written in **VB6** circa 2010 as a COM DLL (`PauloETL.dl
 
 An automated port to **VB.NET** was attempted using the Visual Studio Upgrade Wizard and `UpgradeHelpers` libraries. That port introduced several behavioral changes (see `ASSESSMENT.md` for a detailed comparison), but is the version currently running in production.
 
-The **C# rewrite** is a clean reimplementation targeting .NET 8. It is structured as three projects sharing a common `PauloETL.Core` library. It preserves the original XML configuration format and the VB6 execution logic, while adding:
+The **C# rewrite** is a clean reimplementation targeting .NET 10 (LTS). It is structured as three projects sharing a common `PauloETL.Core` library. It preserves the original XML configuration format and the VB6 execution logic, while adding:
 
 - **Structured logging** via Serilog (console + rolling file)
 - **Retry policies** via Polly for transient database failures
