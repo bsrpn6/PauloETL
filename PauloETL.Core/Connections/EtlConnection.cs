@@ -52,7 +52,7 @@ public sealed class EtlConnection : IAsyncDisposable
     {
         _config = config;
         _log = Log.ForContext("ConnectionId", config.Id);
-        IsOracle = DetectOracle(config.ConnString);
+        IsOracle = DetectOracle(config.ConnString, config.Id);
     }
 
     public bool IsOpen => _connection?.State == ConnectionState.Open;
@@ -154,8 +154,12 @@ public sealed class EtlConnection : IAsyncDisposable
         if (!cleaned.EndsWith(';'))
             cleaned += ";";
 
-        // Add credentials
-        cleaned += $"User ID={uid};Password={pwd};";
+        // Add credentials only if not already present in the connection string
+        var cleanedUpper = cleaned.ToUpperInvariant();
+        if (!cleanedUpper.Contains("USER ID=") && !cleanedUpper.Contains("UID="))
+            cleaned += $"User ID={uid};";
+        if (!cleanedUpper.Contains("PASSWORD=") && !cleanedUpper.Contains("PWD="))
+            cleaned += $"Password={pwd};";
 
         return cleaned;
     }
@@ -186,10 +190,11 @@ public sealed class EtlConnection : IAsyncDisposable
         return connString;
     }
 
-    private static bool DetectOracle(string connString)
+    private static bool DetectOracle(string connString, string connectionId)
     {
         var upper = connString.ToUpperInvariant();
-        return upper.Contains("ORAOLEDB") || upper.Contains("ORACLE");
+        var upperId = connectionId.ToUpperInvariant();
+        return upper.Contains("ORAOLEDB") || upper.Contains("ORACLE") || upperId.Contains("ORACLE");
     }
 
     public async ValueTask DisposeAsync()
