@@ -1,6 +1,8 @@
 using System.Data;
 using System.Data.Common;
+using System.Runtime.InteropServices;
 using Microsoft.Data.SqlClient;
+using Microsoft.Win32;
 using Oracle.ManagedDataAccess.Client;
 using PauloETL.Models;
 using Polly;
@@ -19,6 +21,7 @@ namespace PauloETL.Connections;
 /// </summary>
 public sealed class EtlConnection : IAsyncDisposable
 {
+    private static bool _oracleConfigured;
     private DbConnection? _connection;
     private readonly ConnectionConfig _config;
     private readonly ILogger _log;
@@ -110,9 +113,101 @@ public sealed class EtlConnection : IAsyncDisposable
         _log.Debug("Transformed connection string for {ConnectionId}: {ConnString}", Id, maskedConnString);
 
         if (IsOracle)
+        {
+            EnsureOracleTnsAdmin();
             return new OracleConnection(connString);
+        }
 
         return new SqlConnection(connString);
+    }
+
+    /// <summary>
+    /// Configures ODP.NET Managed to find tnsnames.ora by setting OracleConfiguration.TnsAdmin.
+    /// The original VB6 app used OraOLEDB.Oracle which relied on the Oracle client installation
+    /// to resolve TNS aliases. ODP.NET Managed doesn't automatically find tnsnames.ora, so we
+    /// check TNS_ADMIN, then ORACLE_HOME/network/admin, then scan the registry.
+    /// </summary>
+    private static void EnsureOracleTnsAdmin()
+    {
+        if (_oracleConfigured)
+            return;
+        _oracleConfigured = true;
+
+        // If TnsAdmin is already set (e.g., by user code or config), leave it alone
+        if (!string.IsNullOrEmpty(OracleConfiguration.TnsAdmin))
+        {
+            Log.Debug("OracleConfiguration.TnsAdmin already set: {TnsAdmin}", OracleConfiguration.TnsAdmin);
+            return;
+        }
+
+        // 1. Check TNS_ADMIN environment variable
+        var tnsAdmin = Environment.GetEnvironmentVariable("TNS_ADMIN");
+        if (!string.IsNullOrEmpty(tnsAdmin) && Directory.Exists(tnsAdmin))
+        {
+            OracleConfiguration.TnsAdmin = tnsAdmin;
+            Log.Information("Set OracleConfiguration.TnsAdmin from TNS_ADMIN env var: {TnsAdmin}", tnsAdmin);
+            return;
+        }
+
+        // 2. Check ORACLE_HOME/network/admin
+        var oracleHome = Environment.GetEnvironmentVariable("ORACLE_HOME");
+        if (!string.IsNullOrEmpty(oracleHome))
+        {
+            var networkAdmin = Path.Combine(oracleHome, "network", "admin");
+            if (File.Exists(Path.Combine(networkAdmin, "tnsnames.ora")))
+            {
+                OracleConfiguration.TnsAdmin = networkAdmin;
+                Log.Information("Set OracleConfiguration.TnsAdmin from ORACLE_HOME: {TnsAdmin}", networkAdmin);
+                return;
+            }
+        }
+
+        // 3. On Windows, check the registry for Oracle home paths
+        if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+        {
+            var tnsFromRegistry = FindTnsAdminFromRegistry();
+            if (tnsFromRegistry != null)
+            {
+                OracleConfiguration.TnsAdmin = tnsFromRegistry;
+                Log.Information("Set OracleConfiguration.TnsAdmin from registry: {TnsAdmin}", tnsFromRegistry);
+                return;
+            }
+        }
+
+        Log.Warning("Could not locate tnsnames.ora. Set the TNS_ADMIN environment variable " +
+            "to the directory containing tnsnames.ora, or use a full TNS descriptor in the " +
+            "connection string Data Source.");
+    }
+
+    /// <summary>
+    /// Scans the Windows registry for Oracle home directories that contain tnsnames.ora.
+    /// </summary>
+    private static string? FindTnsAdminFromRegistry()
+    {
+        string[] registryKeys =
+        [
+            @"SOFTWARE\Oracle",
+            @"SOFTWARE\WOW6432Node\Oracle"
+        ];
+
+        foreach (var keyPath in registryKeys)
+        {
+            using var oracleKey = Registry.LocalMachine.OpenSubKey(keyPath);
+            if (oracleKey == null) continue;
+
+            foreach (var subKeyName in oracleKey.GetSubKeyNames())
+            {
+                using var subKey = oracleKey.OpenSubKey(subKeyName);
+                var home = subKey?.GetValue("ORACLE_HOME") as string;
+                if (string.IsNullOrEmpty(home)) continue;
+
+                var networkAdmin = Path.Combine(home, "network", "admin");
+                if (File.Exists(Path.Combine(networkAdmin, "tnsnames.ora")))
+                    return networkAdmin;
+            }
+        }
+
+        return null;
     }
 
     /// <summary>
