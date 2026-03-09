@@ -146,6 +146,13 @@ public sealed class EtlConnection : IAsyncDisposable
             "",
             System.Text.RegularExpressions.RegexOptions.IgnoreCase);
 
+        // Remove Persist Security Info — it's a SqlClient property, not valid for Oracle
+        cleaned = System.Text.RegularExpressions.Regex.Replace(
+            cleaned,
+            @"Persist\s+Security\s+Info\s*=\s*[^;]+;?\s*",
+            "",
+            System.Text.RegularExpressions.RegexOptions.IgnoreCase);
+
         // Strip surrounding single quotes from values (e.g., 'sqloledb' -> sqloledb)
         cleaned = cleaned.Replace("'", "");
 
