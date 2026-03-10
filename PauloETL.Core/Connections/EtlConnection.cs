@@ -122,10 +122,12 @@ public sealed class EtlConnection : IAsyncDisposable
     }
 
     /// <summary>
-    /// Configures ODP.NET Managed to find tnsnames.ora by setting OracleConfiguration.TnsAdmin.
-    /// The original VB6 app used OraOLEDB.Oracle which relied on the Oracle client installation
-    /// to resolve TNS aliases. ODP.NET Managed doesn't automatically find tnsnames.ora, so we
-    /// check TNS_ADMIN, then ORACLE_HOME/network/admin, then scan the registry.
+    /// Configures ODP.NET Managed to find Oracle network config files (sqlnet.ora, tnsnames.ora)
+    /// by setting OracleConfiguration.TnsAdmin. The original VB6 app used OraOLEDB.Oracle which
+    /// relied on the full Oracle client installation for name resolution. ODP.NET Managed doesn't
+    /// automatically find these files, so we check TNS_ADMIN, ORACLE_HOME/network/admin, and
+    /// the Windows registry. If no config directory is found, we configure ODP.NET programmatically
+    /// to use EZCONNECT and HOSTNAME resolution (matching common sqlnet.ora setups).
     /// </summary>
     private static void EnsureOracleTnsAdmin()
     {
@@ -154,7 +156,7 @@ public sealed class EtlConnection : IAsyncDisposable
         if (!string.IsNullOrEmpty(oracleHome))
         {
             var networkAdmin = Path.Combine(oracleHome, "network", "admin");
-            if (File.Exists(Path.Combine(networkAdmin, "tnsnames.ora")))
+            if (IsOracleNetworkAdminDir(networkAdmin))
             {
                 OracleConfiguration.TnsAdmin = networkAdmin;
                 Log.Information("Set OracleConfiguration.TnsAdmin from ORACLE_HOME: {TnsAdmin}", networkAdmin);
@@ -174,13 +176,39 @@ public sealed class EtlConnection : IAsyncDisposable
             }
         }
 
-        Log.Warning("Could not locate tnsnames.ora. Set the TNS_ADMIN environment variable " +
-            "to the directory containing tnsnames.ora, or use a full TNS descriptor in the " +
-            "connection string Data Source.");
+        // 4. No Oracle config directory found — configure ODP.NET programmatically
+        //    to support HOSTNAME and EZCONNECT resolution, which matches the common
+        //    sqlnet.ora setup: NAMES.DIRECTORY_PATH=(TNSNAMES, HOSTNAME, EZCONNECT)
+        Log.Warning("Could not locate Oracle network config directory (sqlnet.ora / tnsnames.ora). " +
+            "Configuring ODP.NET for EZCONNECT name resolution as fallback.");
+        ConfigureOracleNameResolutionFallback();
     }
 
     /// <summary>
-    /// Scans the Windows registry for Oracle home directories that contain tnsnames.ora.
+    /// Programmatically configures ODP.NET Managed name resolution to support bare hostnames.
+    /// This matches the behavior of a sqlnet.ora with:
+    ///   NAMES.DIRECTORY_PATH = (EZCONNECT)
+    /// When Data Source is a bare hostname like "STLDAQ", ODP.NET will connect to
+    /// host:1521/host (using the hostname as the service name).
+    /// </summary>
+    private static void ConfigureOracleNameResolutionFallback()
+    {
+        OracleConfiguration.NamesDirectoryPath = "(EZCONNECT)";
+        Log.Debug("Set OracleConfiguration.NamesDirectoryPath = (EZCONNECT)");
+    }
+
+    /// <summary>
+    /// Returns true if the directory contains sqlnet.ora or tnsnames.ora.
+    /// </summary>
+    private static bool IsOracleNetworkAdminDir(string dir)
+    {
+        return Directory.Exists(dir) &&
+            (File.Exists(Path.Combine(dir, "sqlnet.ora")) ||
+             File.Exists(Path.Combine(dir, "tnsnames.ora")));
+    }
+
+    /// <summary>
+    /// Scans the Windows registry for Oracle home directories that contain Oracle network config.
     /// </summary>
     private static string? FindTnsAdminFromRegistry()
     {
@@ -202,7 +230,7 @@ public sealed class EtlConnection : IAsyncDisposable
                 if (string.IsNullOrEmpty(home)) continue;
 
                 var networkAdmin = Path.Combine(home, "network", "admin");
-                if (File.Exists(Path.Combine(networkAdmin, "tnsnames.ora")))
+                if (IsOracleNetworkAdminDir(networkAdmin))
                     return networkAdmin;
             }
         }
@@ -269,12 +297,17 @@ public sealed class EtlConnection : IAsyncDisposable
     /// <summary>
     /// Builds the final connection string with provider-specific defaults.
     /// SQL Server: adds Encrypt=false to match legacy OLEDB behavior (no TLS).
+    /// Oracle: ensures Data Source is in a format ODP.NET Managed can resolve.
     /// </summary>
     private string BuildConnectionString()
     {
         var connString = TransformConnectionString(_config.ConnString, _config.Uid, _config.Pwd);
 
-        if (!IsOracle)
+        if (IsOracle)
+        {
+            connString = EnsureOracleDataSourceFormat(connString);
+        }
+        else
         {
             // Microsoft.Data.SqlClient v5+ defaults to Encrypt=Mandatory.
             // Legacy internal SQL Servers don't have trusted certificates,
@@ -290,6 +323,38 @@ public sealed class EtlConnection : IAsyncDisposable
         }
 
         return connString;
+    }
+
+    /// <summary>
+    /// Ensures the Oracle Data Source is in a format ODP.NET Managed can resolve.
+    /// If the Data Source is a bare hostname (e.g., "STLDAQ") with no TNS descriptor,
+    /// no slash (EZCONNECT format), and no colon (port), convert it to EZCONNECT format
+    /// "host/host" so that the hostname is used as the service name.
+    /// This matches the behavior of sqlnet.ora HOSTNAME.DEFAULT_SERVICE_IS_HOST = 1.
+    /// </summary>
+    private string EnsureOracleDataSourceFormat(string connString)
+    {
+        var match = System.Text.RegularExpressions.Regex.Match(
+            connString,
+            @"Data\s+Source\s*=\s*([^;]+)",
+            System.Text.RegularExpressions.RegexOptions.IgnoreCase);
+
+        if (!match.Success)
+            return connString;
+
+        var dataSource = match.Groups[1].Value.Trim();
+
+        // Already a TNS descriptor, EZCONNECT with service, or has a port — leave it alone
+        if (dataSource.Contains('(') || dataSource.Contains('/') || dataSource.Contains(':'))
+            return connString;
+
+        // Bare hostname — convert to EZCONNECT format: host/host
+        // This tells ODP.NET: connect to host on default port 1521, service name = hostname
+        var ezConnect = $"{dataSource}/{dataSource}";
+        _log.Debug("Converted bare Oracle Data Source '{Original}' to EZCONNECT format '{EzConnect}'",
+            dataSource, ezConnect);
+
+        return connString.Replace(match.Groups[1].Value, ezConnect);
     }
 
     private static bool DetectOracle(string connString, string connectionId)
