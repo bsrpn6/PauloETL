@@ -311,18 +311,17 @@ public sealed class EtlCommand
         }
         else if (sqlText.StartsWith("EXEC ", StringComparison.OrdinalIgnoreCase))
         {
-            // SQL Server: convert "EXEC dbo.spName ?, ?" to stored procedure call
-            var parts = sqlText.Split(' ', StringSplitOptions.RemoveEmptyEntries);
-            if (parts.Length >= 2)
-            {
-                cmd.CommandText = parts[1].TrimEnd(',');
-                cmd.CommandType = CommandType.StoredProcedure;
-            }
-            else
-            {
-                cmd.CommandText = sqlText;
-                cmd.CommandType = CommandType.Text;
-            }
+            // SQL Server: keep as CommandType.Text with the original EXEC syntax.
+            // VB6 used ADODB with adCmdUnknown (the default), which sent the raw
+            // "EXEC dbo.spName ?, ?" text with positional parameters. Parameter names
+            // were irrelevant — only position mattered. Using CommandType.StoredProcedure
+            // would cause SQL Server to validate all parameter names against the SP
+            // definition, which breaks when XML param names don't exactly match.
+            //
+            // Microsoft.Data.SqlClient doesn't support ? placeholders with CommandType.Text,
+            // so we replace each ? with the corresponding @paramName in order.
+            cmd.CommandText = ReplacePositionalPlaceholders(sqlText, _config.Parameters);
+            cmd.CommandType = CommandType.Text;
         }
         else
         {
@@ -355,6 +354,33 @@ public sealed class EtlCommand
         }
 
         return cmd;
+    }
+
+    /// <summary>
+    /// Replaces positional ? placeholders in SQL text with @paramName references.
+    /// ADODB used ? for positional parameters; Microsoft.Data.SqlClient requires @named params.
+    /// Example: "EXEC dbo.spName ?, ?" with params [Foo, Bar] → "EXEC dbo.spName @Foo, @Bar"
+    /// </summary>
+    private static string ReplacePositionalPlaceholders(string sqlText, IReadOnlyList<ParamConfig> parameters)
+    {
+        var paramIndex = 0;
+        var sb = new System.Text.StringBuilder(sqlText.Length + parameters.Count * 10);
+
+        for (int i = 0; i < sqlText.Length; i++)
+        {
+            if (sqlText[i] == '?' && paramIndex < parameters.Count)
+            {
+                sb.Append('@');
+                sb.Append(parameters[paramIndex].Name);
+                paramIndex++;
+            }
+            else
+            {
+                sb.Append(sqlText[i]);
+            }
+        }
+
+        return sb.ToString();
     }
 
     private static bool IsOdbcCallSyntax(string sql)
