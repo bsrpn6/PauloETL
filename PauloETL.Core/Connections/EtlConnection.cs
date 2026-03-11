@@ -305,7 +305,8 @@ public sealed class EtlConnection : IAsyncDisposable
 
         if (IsOracle)
         {
-            connString = EnsureOracleDataSourceFormat(connString);
+            // No additional Oracle transforms needed — the XML Data Source should use
+            // EZCONNECT format (host:port/service_name) or a TNS alias/descriptor.
         }
         else
         {
@@ -323,38 +324,6 @@ public sealed class EtlConnection : IAsyncDisposable
         }
 
         return connString;
-    }
-
-    /// <summary>
-    /// Ensures the Oracle Data Source is in a format ODP.NET Managed can resolve.
-    /// If the Data Source is a bare hostname (e.g., "STLDAQ") with no TNS descriptor,
-    /// no slash (EZCONNECT format), and no colon (port), convert it to EZCONNECT format
-    /// "host/host" so that the hostname is used as the service name.
-    /// This matches the behavior of sqlnet.ora HOSTNAME.DEFAULT_SERVICE_IS_HOST = 1.
-    /// </summary>
-    private string EnsureOracleDataSourceFormat(string connString)
-    {
-        var match = System.Text.RegularExpressions.Regex.Match(
-            connString,
-            @"Data\s+Source\s*=\s*([^;]+)",
-            System.Text.RegularExpressions.RegexOptions.IgnoreCase);
-
-        if (!match.Success)
-            return connString;
-
-        var dataSource = match.Groups[1].Value.Trim();
-
-        // Already a TNS descriptor, EZCONNECT with service, or has a port — leave it alone
-        if (dataSource.Contains('(') || dataSource.Contains('/') || dataSource.Contains(':'))
-            return connString;
-
-        // Bare hostname — convert to EZCONNECT format: host/host
-        // This tells ODP.NET: connect to host on default port 1521, service name = hostname
-        var ezConnect = $"{dataSource}/{dataSource}";
-        _log.Debug("Converted bare Oracle Data Source '{Original}' to EZCONNECT format '{EzConnect}'",
-            dataSource, ezConnect);
-
-        return connString.Replace(match.Groups[1].Value, ezConnect);
     }
 
     private static bool DetectOracle(string connString, string connectionId)

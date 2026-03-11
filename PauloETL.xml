@@ -4,7 +4,7 @@
 <root xsi:noNamespaceSchemaLocation="ETLSchema.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
 	<connections>
 		<connection id="SQL" connstring="Provider='sqloledb';Data Source='STLSRVR03.PAULO.COM';Initial Catalog='PauloWIP'" name="Paulo Site WIP Database" uid="process" pwd="process"/>
-		<connection id="ORACLE" connstring="Provider=OraOLEDB.Oracle;Data Source=STLDAQ.PAULO.COM;DistribTX=0;PLSQLRSet=1;" name="Paulo Oracle PICS Database" uid="process_access" pwd="givemedata"/>
+		<connection id="ORACLE" connstring="Data Source=STLDAQ:1521/STLDAQ.PAULO.COM;User ID=process_access;Password=givemedata" name="Paulo Oracle PICS Database" uid="process_access" pwd="givemedata"/>
 	</connections>
 	<jobs>
 		<job id="Main" name="Upload Events and Download Schedule/Shop Order Information From Oracle">
