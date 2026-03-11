@@ -27,6 +27,7 @@ public static class AdoTypeMapper
         "adboolean" => DbType.Boolean,
         "addate" => DbType.DateTime,
         "adinteger" => DbType.Int32,
+        "adbigint" => DbType.Int64,
         "adsingle" => DbType.Single,
         "addouble" => DbType.Double,
         _ => throw new ArgumentException($"Unknown ADO data type: '{adoType}'")
